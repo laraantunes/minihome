@@ -12,8 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateEngineAction(engine) {
         if (engine === 'google') {
             form.action = 'https://www.google.com/search';
+            input.name = 'q';
+        } else if (engine === 'wikipedia') {
+            form.action = 'https://pt.wikipedia.org/w/index.php';
+            input.name = 'search';
         } else {
             form.action = 'https://duckduckgo.com/';
+            input.name = 'q';
         }
     }
 

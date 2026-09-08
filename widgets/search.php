@@ -9,6 +9,7 @@
             <select id="search-engine-select" aria-label="Provedor de Busca" style="width: 100%; padding: 10px 12px; border-radius: var(--border-radius-sm); background: rgba(0,0,0,0.1); color: var(--text-primary); border: 1px solid var(--border-color); font-size: 0.95rem; cursor: pointer; outline: none; appearance: auto; -webkit-appearance: auto;">
                 <option value="ddg" style="color: #000;">DuckDuckGo</option>
                 <option value="google" style="color: #000;">Google</option>
+                <option value="wikipedia" style="color: #000;">Wikipedia</option>
             </select>
             
             <div style="display: flex; gap: 8px; width: 100%;">
