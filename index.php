@@ -14,7 +14,7 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <?php
-    $v = 14;
+    $v = 15;
     ?>
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?= $v ?>">
