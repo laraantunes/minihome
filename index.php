@@ -14,7 +14,7 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <?php
-    $v = 15;
+    $v = 16;
     ?>
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?= $v ?>">
@@ -43,6 +43,7 @@
         <?php include 'widgets/notes.php'; ?>
         <?php include 'widgets/search.php'; ?>
         <?php include 'widgets/shortener.php'; ?>
+        <?php include 'widgets/rss.php'; ?>
     </main>
 
     <?php include 'widgets/settings_modal.php'; ?>
@@ -63,8 +64,8 @@
     <script src="assets/js/widgets/todo.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/notes.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/search.js?v=<?= $v ?>"></script>
-
     <script src="assets/js/widgets/shortener.js?v=<?= $v ?>"></script>
+    <script src="assets/js/widgets/rss.js?v=<?= $v ?>"></script>
 </body>
 
 </html>
