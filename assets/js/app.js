@@ -9,8 +9,142 @@ const App = {
         
         // Wait for DOM
         document.addEventListener('DOMContentLoaded', () => {
+            this.initWidgetsUI();
             // Widgets will self-initialize in their own scripts
         });
+    },
+
+    initWidgetsUI() {
+        const grid = document.querySelector('.dashboard-grid');
+        if (!grid) return;
+
+        const widgetsOrder = this.loadData('widgets_order', []);
+        const widgetsHidden = this.loadData('widgets_hidden', []);
+
+        // Sort DOM elements based on widgetsOrder
+        if (widgetsOrder.length > 0) {
+            widgetsOrder.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    grid.appendChild(el);
+                }
+            });
+        }
+
+        // Initialize SortableJS
+        if (typeof Sortable !== 'undefined') {
+            new Sortable(grid, {
+                animation: 150,
+                handle: '.drag-handle',
+                ghostClass: 'sortable-ghost',
+                onEnd: () => {
+                    const newOrder = Array.from(grid.children).map(el => el.id).filter(id => id);
+                    this.saveData('widgets_order', newOrder);
+                }
+            });
+        }
+
+        // Inject widget footers
+        document.querySelectorAll('.widget').forEach(widget => {
+            const id = widget.id;
+            
+            // Check visibility
+            if (widgetsHidden.includes(id)) {
+                widget.classList.add('hidden');
+            }
+
+            const dragBtn = document.createElement('button');
+            dragBtn.className = 'icon-btn drag-handle';
+            dragBtn.innerHTML = '<span class="material-icons-round">drag_indicator</span>';
+            dragBtn.title = 'Mover widget';
+            
+            const hideBtn = document.createElement('button');
+            hideBtn.className = 'icon-btn hide-widget-btn';
+            hideBtn.innerHTML = '<span class="material-icons-round">visibility_off</span>';
+            hideBtn.title = 'Ocultar widget';
+            
+            hideBtn.addEventListener('click', () => {
+                widget.classList.add('hidden');
+                let hidden = this.loadData('widgets_hidden', []);
+                if (!hidden.includes(id)) {
+                    hidden.push(id);
+                    this.saveData('widgets_hidden', hidden);
+                }
+                
+                // Dispatch event so top menu can update
+                window.dispatchEvent(new CustomEvent('widgetHiddenChanged'));
+            });
+
+            const footer = document.createElement('div');
+            footer.className = 'widget-footer';
+            footer.appendChild(dragBtn);
+            footer.appendChild(hideBtn);
+            
+            widget.appendChild(footer);
+        });
+
+        this.initWidgetsMenu();
+    },
+
+    initWidgetsMenu() {
+        const btn = document.getElementById('widgets-menu-btn');
+        const menu = document.getElementById('widgets-menu');
+        const list = document.getElementById('widgets-menu-list');
+
+        if (!btn || !menu || !list) return;
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+
+        const updateMenu = () => {
+            list.innerHTML = '';
+            const widgetsHidden = this.loadData('widgets_hidden', []);
+            
+            document.querySelectorAll('.widget').forEach(widget => {
+                const id = widget.id;
+                const titleEl = widget.querySelector('.widget-header h2');
+                const titleHTML = titleEl ? titleEl.innerHTML : id;
+                
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                
+                const isHidden = widgetsHidden.includes(id);
+                
+                item.innerHTML = `
+                    <label>
+                        <input type="checkbox" ${!isHidden ? 'checked' : ''}>
+                        <span style="display: flex; align-items: center; gap: 8px;">${titleHTML}</span>
+                    </label>
+                `;
+                
+                const checkbox = item.querySelector('input');
+                checkbox.addEventListener('change', (e) => {
+                    let hidden = this.loadData('widgets_hidden', []);
+                    if (e.target.checked) {
+                        // Show widget
+                        widget.classList.remove('hidden');
+                        hidden = hidden.filter(h => h !== id);
+                    } else {
+                        // Hide widget
+                        widget.classList.add('hidden');
+                        if (!hidden.includes(id)) hidden.push(id);
+                    }
+                    this.saveData('widgets_hidden', hidden);
+                });
+                
+                list.appendChild(item);
+            });
+        };
+
+        updateMenu();
+        window.addEventListener('widgetHiddenChanged', updateMenu);
     },
 
     getTheme() {

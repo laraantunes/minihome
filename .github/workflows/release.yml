@@ -1,0 +1,30 @@
+name: Create Release ZIP
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Remove unused files
+      run: |
+        rm -rf .git .github
+
+    - name: Create ZIP archive
+      run: zip -r minihome-release.zip . -x "*.git*"
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./minihome-release.zip
+        asset_name: minihome-release.zip
+        asset_content_type: application/zip

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const editBtn = document.getElementById('rss-edit-tab');
     const delBtn = document.getElementById('rss-del-tab');
     const maximizeBtn = document.getElementById('rss-maximize-btn');
+    const reloadBtn = document.getElementById('rss-reload-btn');
     
     const modal = document.getElementById('rss-modal');
     const modalTitle = document.getElementById('rss-modal-title');
@@ -186,6 +187,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Buttons
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+            if (feeds.length > 0) loadFeed();
+        });
+    }
+
     addBtn.addEventListener('click', () => openModal('add'));
     
     editBtn.addEventListener('click', () => {

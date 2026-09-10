@@ -33,6 +33,17 @@
                     <input type="file" id="import-file" accept=".json" class="hidden">
                 </div>
             </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: var(--spacing-lg) 0;">
+
+            <div class="form-group">
+                <label>Atualização do Sistema</label>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: var(--spacing-md);">Baixa a última versão do GitHub e atualiza os arquivos do sistema automaticamente (não afeta seus dados).</p>
+                <button id="update-btn" class="btn btn-secondary" style="width: 100%;">
+                    <span class="material-icons-round">system_update_alt</span> Verificar e Atualizar
+                </button>
+                <div id="update-message" style="margin-top: 10px; font-size: 0.85rem; text-align: center;"></div>
+            </div>
         </div>
     </div>
 </div>

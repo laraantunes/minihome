@@ -14,7 +14,7 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <?php
-    $v = 16;
+    $v = 17;
     ?>
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?= $v ?>">
@@ -27,9 +27,18 @@
             <span class="material-icons-round">home</span>
             <h1>Minihome</h1>
         </div>
-        <button id="settings-btn" class="icon-btn" aria-label="Configurações">
-            <span class="material-icons-round">settings</span>
-        </button>
+        <div style="display: flex; gap: var(--spacing-sm);">
+            <button id="widgets-menu-btn" class="icon-btn" aria-label="Widgets">
+                <span class="material-icons-round">dashboard_customize</span>
+            </button>
+            <div id="widgets-menu" class="dropdown-menu hidden">
+                <div class="dropdown-header">Widgets</div>
+                <div id="widgets-menu-list"></div>
+            </div>
+            <button id="settings-btn" class="icon-btn" aria-label="Configurações">
+                <span class="material-icons-round">settings</span>
+            </button>
+        </div>
     </header>
 
     <main class="dashboard-grid">
@@ -43,6 +52,7 @@
         <?php include 'widgets/notes.php'; ?>
         <?php include 'widgets/search.php'; ?>
         <?php include 'widgets/shortener.php'; ?>
+        <?php include 'widgets/links.php'; ?>
         <?php include 'widgets/rss.php'; ?>
     </main>
 
@@ -53,6 +63,7 @@
     </footer>
 
     <!-- Main JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="assets/js/app.js?v=<?= $v ?>"></script>
     <script src="assets/js/settings.js?v=<?= $v ?>"></script>
     <!-- Widgets JS -->
@@ -65,6 +76,7 @@
     <script src="assets/js/widgets/notes.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/search.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/shortener.js?v=<?= $v ?>"></script>
+    <script src="assets/js/widgets/links.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/rss.js?v=<?= $v ?>"></script>
 </body>
 

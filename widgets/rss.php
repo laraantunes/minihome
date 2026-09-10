@@ -3,6 +3,7 @@
     <div class="widget-header">
         <h2><span class="material-icons-round">rss_feed</span> Notícias (RSS)</h2>
         <div class="rss-controls notes-controls">
+            <button id="rss-reload-btn" class="icon-btn" aria-label="Recarregar"><span class="material-icons-round">refresh</span></button>
             <button id="rss-maximize-btn" class="icon-btn" aria-label="Maximizar"><span class="material-icons-round">open_in_full</span></button>
             <button id="rss-add-tab" class="icon-btn" aria-label="Nova Assinatura"><span class="material-icons-round">add</span></button>
             <button id="rss-edit-tab" class="icon-btn" aria-label="Editar Assinatura"><span class="material-icons-round">edit</span></button>

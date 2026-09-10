@@ -61,4 +61,42 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset input
         importFile.value = '';
     });
+
+    // Update System
+    const updateBtn = document.getElementById('update-btn');
+    const updateMsg = document.getElementById('update-message');
+
+    if (updateBtn) {
+        updateBtn.addEventListener('click', async () => {
+            if (!confirm('Deseja iniciar a verificação e atualização do sistema?')) {
+                return;
+            }
+
+            const originalHtml = updateBtn.innerHTML;
+            updateBtn.disabled = true;
+            updateBtn.innerHTML = '<span class="material-icons-round spinning">sync</span> Atualizando...';
+            updateMsg.textContent = '';
+            updateMsg.style.color = 'var(--text-primary)';
+
+            try {
+                const response = await fetch('update_action.php', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    updateMsg.style.color = 'var(--success-color)';
+                    updateMsg.textContent = data.message;
+                    setTimeout(() => window.location.reload(), 3000);
+                } else {
+                    updateMsg.style.color = 'var(--danger-color)';
+                    updateMsg.textContent = data.message || 'Erro desconhecido';
+                }
+            } catch (err) {
+                updateMsg.style.color = 'var(--danger-color)';
+                updateMsg.textContent = 'Falha ao se comunicar com o servidor.';
+            } finally {
+                updateBtn.disabled = false;
+                updateBtn.innerHTML = originalHtml;
+            }
+        });
+    }
 });
