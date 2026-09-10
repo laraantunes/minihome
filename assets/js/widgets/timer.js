@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const setBtn = document.getElementById('timer-set-btn');
     const minInput = document.getElementById('timer-min-input');
     const secInput = document.getElementById('timer-sec-input');
+    const alarmAudio = document.getElementById('timer-alarm-audio');
     
     let totalSeconds = 0;
     let currentSeconds = 0;
@@ -28,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updateDisplay();
         stopTimer();
         display.classList.remove('timer-finished');
+        if (alarmAudio) {
+            alarmAudio.pause();
+            alarmAudio.currentTime = 0;
+        }
     }
 
     function startTimer() {
@@ -45,6 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentSeconds <= 0) {
                 stopTimer();
                 display.classList.add('timer-finished');
+                if (alarmAudio) {
+                    alarmAudio.currentTime = 0;
+                    alarmAudio.play().catch(e => console.log('Autoplay blocked:', e));
+                }
             }
         }, 1000);
     }
@@ -61,6 +70,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSeconds = totalSeconds;
         updateDisplay();
         display.classList.remove('timer-finished');
+        if (alarmAudio) {
+            alarmAudio.pause();
+            alarmAudio.currentTime = 0;
+        }
     }
 
     // Event Listeners

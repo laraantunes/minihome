@@ -27,4 +27,5 @@
             <button id="timer-reset-btn" class="btn btn-secondary"><span class="material-icons-round">replay</span></button>
         </div>
     </div>
+    <audio id="timer-alarm-audio" src="assets/sound/611821__syntheffects__timer-alarm-detector-bleeping-beeping.wav" preload="auto"></audio>
 </div>

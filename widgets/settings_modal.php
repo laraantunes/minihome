@@ -44,6 +44,28 @@
                 </button>
                 <div id="update-message" style="margin-top: 10px; font-size: 0.85rem; text-align: center;"></div>
             </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: var(--spacing-lg) 0;">
+
+            <?php
+            include_once __DIR__ . '/../version.php';
+            ?>
+            <div class="form-group" style="text-align: center;">
+                <img src="assets/icon-192.png" alt="Minihome Logo" style="width: 64px; height: 64px; border-radius: 16px; margin-bottom: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                <label style="display: block; margin-bottom: 0;">Sobre o Minihome</label>
+                <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px;">
+                    <p style="margin-bottom: 8px;">Versão: <strong><?= $version ?? 'Desconhecida' ?></strong></p>
+                    <p style="margin-bottom: 8px;">
+                        <a href="https://github.com/laraantunes/minihome" target="_blank" style="color: var(--accent-color); text-decoration: none;">GitHub</a> &bull; 
+                        Desenvolvido com 💜 por <a href="https://laralabs.dev" target="_blank" style="color: var(--accent-color); text-decoration: none;">laralabs.dev</a>
+                    </p>
+                    <p style="margin-bottom: 4px;"><strong>Serviços Utilizados:</strong></p>
+                    <ul style="list-style-type: disc; list-style-position: inside; padding-left: 0; margin-left: 0;">
+                        <li><a href="https://open-meteo.com/" target="_blank" style="color: var(--text-secondary); text-decoration: underline;">Open-Meteo API</a></li>
+                        <li><a href="https://freesound.org/" target="_blank" style="color: var(--text-secondary); text-decoration: underline;">Freesound</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
