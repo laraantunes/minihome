@@ -67,7 +67,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 delBtn.className = 'icon-btn';
                 delBtn.innerHTML = '<span class="material-icons-round" style="font-size:18px">delete</span>';
                 delBtn.style.padding = '4px';
-                delBtn.style.color = 'var(--danger-color)';
                 delBtn.onclick = () => {
                     activeId = link.id;
                     delModal.classList.add('active');
