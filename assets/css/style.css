@@ -960,3 +960,60 @@ body.theme-dark .dropdown-item:hover {
 .todo-list li .drag-handle:hover {
     color: var(--text-primary);
 }
+
+/* Fullscreen Widget */
+.widget.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    margin: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--widget-bg);
+}
+
+.widget.fullscreen .widget-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Scaling text for fullscreen */
+.widget.fullscreen .clock-time,
+.widget.fullscreen .timer-display,
+.widget.fullscreen .sw-display {
+    font-size: 15vw;
+    line-height: 1;
+}
+
+.widget.fullscreen .clock-date {
+    font-size: 5vw;
+}
+
+/* Hide some elements when fullscreen */
+.widget.fullscreen .timer-quick-btns,
+.widget.fullscreen .timer-custom,
+.widget.fullscreen .sw-laps,
+.widget.fullscreen .clock-tz-list,
+.widget.fullscreen .tz-form,
+.widget.fullscreen #clock-add-tz-btn,
+.widget.fullscreen .widget-footer {
+    display: none !important;
+}
+
+/* Enlarge controls in fullscreen */
+.widget.fullscreen .timer-controls button,
+.widget.fullscreen .sw-controls button {
+    width: 80px;
+    height: 80px;
+}
+.widget.fullscreen .timer-controls button .material-icons-round,
+.widget.fullscreen .sw-controls button .material-icons-round {
+    font-size: 2.5rem;
+}

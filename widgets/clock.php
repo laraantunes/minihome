@@ -2,9 +2,14 @@
 <div class="widget" id="clock-widget">
     <div class="widget-header">
         <h2><span class="material-icons-round">schedule</span> Relógio</h2>
-        <button id="clock-add-tz-btn" class="icon-btn" aria-label="Adicionar Fuso Horário">
-            <span class="material-icons-round">add</span>
-        </button>
+        <div style="display: flex; gap: 4px;">
+            <button id="clock-add-tz-btn" class="icon-btn" aria-label="Adicionar Fuso Horário">
+                <span class="material-icons-round">add</span>
+            </button>
+            <button class="icon-btn fullscreen-btn" aria-label="Tela Cheia" title="Tela Cheia">
+                <span class="material-icons-round">fullscreen</span>
+            </button>
+        </div>
     </div>
     
     <div class="widget-content clock-content">

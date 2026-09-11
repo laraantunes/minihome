@@ -2,6 +2,9 @@
 <div class="widget" id="stopwatch-widget">
     <div class="widget-header">
         <h2><span class="material-icons-round">timer_10</span> Cronômetro</h2>
+        <button class="icon-btn fullscreen-btn" aria-label="Tela Cheia" title="Tela Cheia">
+            <span class="material-icons-round">fullscreen</span>
+        </button>
     </div>
     
     <div class="widget-content stopwatch-content">

@@ -2,6 +2,9 @@
 <div class="widget" id="timer-widget">
     <div class="widget-header">
         <h2><span class="material-icons-round">timer</span> Timer</h2>
+        <button class="icon-btn fullscreen-btn" aria-label="Tela Cheia" title="Tela Cheia">
+            <span class="material-icons-round">fullscreen</span>
+        </button>
     </div>
     
     <div class="widget-content timer-content">

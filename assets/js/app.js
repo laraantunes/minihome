@@ -272,3 +272,22 @@ if ('serviceWorker' in navigator) {
       .catch(() => {});
   });
 }
+
+// Global Fullscreen Handlers
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.fullscreen-btn');
+    if (btn) {
+        const widget = btn.closest('.widget');
+        if (widget) {
+            widget.classList.toggle('fullscreen');
+            const icon = btn.querySelector('.material-icons-round');
+            if (icon) {
+                if (widget.classList.contains('fullscreen')) {
+                    icon.textContent = 'fullscreen_exit';
+                } else {
+                    icon.textContent = 'fullscreen';
+                }
+            }
+        }
+    }
+});
