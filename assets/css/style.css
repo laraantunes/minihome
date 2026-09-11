@@ -952,3 +952,11 @@ body.theme-dark .dropdown-item:hover {
     cursor: pointer;
 }
 
+/* Todo List Drag and Drop */
+.todo-list li.drag-over {
+    border-top: 2px solid var(--accent-color);
+    padding-top: 6px; /* offset the border to avoid jump if possible, or just accept the tiny jump */
+}
+.todo-list li .drag-handle:hover {
+    color: var(--text-primary);
+}

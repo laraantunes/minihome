@@ -5,18 +5,68 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let todos = App.loadData('todos', []);
 
+    let dragStartIndex;
+
+    function handleDragStart(e) {
+        dragStartIndex = +e.currentTarget.getAttribute('data-index');
+        e.dataTransfer.effectAllowed = 'move';
+        // Opcional: e.currentTarget.classList.add('dragging');
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDragEnter(e) {
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
+        
+        const dragEndIndex = +e.currentTarget.getAttribute('data-index');
+        
+        if (dragStartIndex !== dragEndIndex && dragStartIndex !== undefined) {
+            const item = todos.splice(dragStartIndex, 1)[0];
+            todos.splice(dragEndIndex, 0, item);
+            App.saveData('todos', todos);
+            renderTodos();
+        }
+        return false;
+    }
+
     function renderTodos() {
         list.innerHTML = '';
         todos.forEach((todo, index) => {
             const li = document.createElement('li');
             if (todo.done) li.classList.add('done');
+            
+            li.setAttribute('draggable', 'true');
+            li.setAttribute('data-index', index);
+            
+            li.addEventListener('dragstart', handleDragStart);
+            li.addEventListener('dragover', handleDragOver);
+            li.addEventListener('drop', handleDrop);
+            li.addEventListener('dragenter', handleDragEnter);
+            li.addEventListener('dragleave', handleDragLeave);
 
             li.innerHTML = `
-                <label class="todo-item-label">
+                <span class="material-icons-round drag-handle" title="Mover tarefa" style="cursor: grab; color: var(--text-muted); font-size: 1.1rem; margin-right: 4px;">drag_indicator</span>
+                <label class="todo-item-label" style="flex: 1; display: flex; align-items: center; min-width: 0;">
                     <input type="checkbox" class="todo-check" data-index="${index}" ${todo.done ? 'checked' : ''}>
-                    <span class="todo-text">${todo.text}</span>
+                    <span class="todo-text" spellcheck="false" data-index="${index}" style="outline: none; flex: 1; padding: 2px 4px; border-radius: 4px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${todo.text}</span>
                 </label>
-                <button class="icon-btn todo-delete" data-index="${index}"><span class="material-icons-round" style="font-size: 1.1rem;">delete</span></button>
+                <div style="display: flex; gap: 4px;">
+                    <button class="icon-btn todo-edit" data-index="${index}" title="Editar"><span class="material-icons-round" style="font-size: 1.1rem;">edit</span></button>
+                    <button class="icon-btn todo-delete" data-index="${index}" title="Excluir"><span class="material-icons-round" style="font-size: 1.1rem;">delete</span></button>
+                </div>
             `;
             list.appendChild(li);
         });
@@ -28,6 +78,64 @@ document.addEventListener('DOMContentLoaded', () => {
                 todos[idx].done = e.target.checked;
                 App.saveData('todos', todos);
                 renderTodos();
+            });
+        });
+
+        // Edit button events
+        document.querySelectorAll('.todo-edit').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const idx = e.currentTarget.getAttribute('data-index');
+                const span = document.querySelector(`.todo-text[data-index="${idx}"]`);
+                
+                span.setAttribute('contenteditable', 'true');
+                span.style.whiteSpace = 'normal';
+                span.style.textOverflow = 'clip';
+                span.style.overflow = 'visible';
+                span.focus();
+                
+                // Move cursor to end
+                const selection = window.getSelection();
+                const range = document.createRange();
+                range.selectNodeContents(span);
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            });
+        });
+
+        // Edit events (for the span)
+        document.querySelectorAll('.todo-text').forEach(span => {
+            span.addEventListener('click', (e) => {
+                if (span.getAttribute('contenteditable') === 'true') {
+                    e.preventDefault(); // Prevent label click
+                }
+            });
+            span.addEventListener('blur', (e) => {
+                span.removeAttribute('contenteditable');
+                const idx = e.target.getAttribute('data-index');
+                const newText = e.target.innerText.trim();
+                
+                // Restaura o visual truncado
+                e.target.style.whiteSpace = 'nowrap';
+                e.target.style.textOverflow = 'ellipsis';
+                e.target.style.overflow = 'hidden';
+
+                if (newText !== todos[idx].text) {
+                    if (newText === '') {
+                        todos.splice(idx, 1);
+                    } else {
+                        todos[idx].text = newText;
+                    }
+                    App.saveData('todos', todos);
+                    renderTodos();
+                }
+            });
+            span.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    e.target.blur();
+                }
             });
         });
 
