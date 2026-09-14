@@ -291,3 +291,23 @@ document.addEventListener('click', (e) => {
         }
     }
 });
+
+// Global ESC Handler for exiting fullscreen and screensaver
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        // Exit screensaver
+        if (typeof window.isScreensaverRunning === 'function' && window.isScreensaverRunning()) {
+            window.stopScreensaver();
+        }
+        
+        // Exit any fullscreen widget
+        const fullscreenWidgets = document.querySelectorAll('.widget.fullscreen');
+        fullscreenWidgets.forEach(widget => {
+            widget.classList.remove('fullscreen');
+            const icon = widget.querySelector('.fullscreen-btn .material-icons-round');
+            if (icon) {
+                icon.textContent = 'fullscreen';
+            }
+        });
+    }
+});

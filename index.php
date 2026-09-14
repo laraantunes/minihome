@@ -36,6 +36,9 @@
                 <div class="dropdown-header">Widgets</div>
                 <div id="widgets-menu-list"></div>
             </div>
+            <button id="screensaver-btn" class="icon-btn" aria-label="Protetor de Tela" title="Protetor de Tela">
+                <span class="material-icons-round">emoji_food_beverage</span>
+            </button>
             <button id="settings-btn" class="icon-btn" aria-label="Configurações">
                 <span class="material-icons-round">settings</span>
             </button>
@@ -63,6 +66,11 @@
         2026 - <a href="https://laralabs.dev" target="_blank">Laralabs</a>
     </footer>
 
+    <!-- Screensaver Container -->
+    <div id="screensaver" class="hidden">
+        <div id="screensaver-ball"></div>
+    </div>
+
     <!-- Main JS -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="assets/js/app.js?v=<?= $v ?>"></script>
@@ -79,6 +87,7 @@
     <script src="assets/js/widgets/shortener.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/links.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/rss.js?v=<?= $v ?>"></script>
+    <script src="assets/js/screensaver.js?v=<?= $v ?>"></script>
 </body>
 
 </html>
