@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (updateBtn) {
         updateBtn.addEventListener('click', async () => {
-            if (!confirm('Deseja iniciar a verificação e atualização do sistema?')) {
+            if (!(await App.confirm('Deseja iniciar a verificação e atualização do sistema?'))) {
                 return;
             }
 

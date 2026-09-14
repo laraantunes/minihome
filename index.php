@@ -58,9 +58,26 @@
         <?php include 'widgets/shortener.php'; ?>
         <?php include 'widgets/links.php'; ?>
         <?php include 'widgets/rss.php'; ?>
+        <?php include 'widgets/miniplayer.php'; ?>
     </main>
 
     <?php include 'widgets/settings_modal.php'; ?>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-header">
+                <h2>Confirmação</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message" style="margin: 1.5rem 0; font-size: 1.1rem; color: var(--text-primary);"></p>
+                <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem;">
+                    <button id="confirm-no-btn" class="btn" style="background-color: var(--widget-bg); color: var(--text-primary);">Cancelar</button>
+                    <button id="confirm-yes-btn" class="btn btn-primary">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <footer class="app-footer">
         2026 - <a href="https://laralabs.dev" target="_blank">Laralabs</a>
@@ -87,6 +104,7 @@
     <script src="assets/js/widgets/shortener.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/links.js?v=<?= $v ?>"></script>
     <script src="assets/js/widgets/rss.js?v=<?= $v ?>"></script>
+    <script src="assets/js/widgets/miniplayer.js?v=<?= $v ?>"></script>
     <script src="assets/js/screensaver.js?v=<?= $v ?>"></script>
 </body>
 

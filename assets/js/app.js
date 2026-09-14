@@ -166,6 +166,36 @@ const App = {
         localStorage.setItem(`minihome_${key}`, JSON.stringify(data));
     },
 
+    confirm(message) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('confirm-modal');
+            const msgEl = document.getElementById('confirm-message');
+            const yesBtn = document.getElementById('confirm-yes-btn');
+            const noBtn = document.getElementById('confirm-no-btn');
+            
+            if (!modal || !msgEl || !yesBtn || !noBtn) {
+                // Fallback to native if not found
+                resolve(window.confirm(message));
+                return;
+            }
+
+            msgEl.textContent = message;
+            modal.classList.add('active');
+            
+            const cleanup = () => {
+                modal.classList.remove('active');
+                yesBtn.removeEventListener('click', onYes);
+                noBtn.removeEventListener('click', onNo);
+            };
+            
+            const onYes = () => { cleanup(); resolve(true); };
+            const onNo = () => { cleanup(); resolve(false); };
+            
+            yesBtn.addEventListener('click', onYes);
+            noBtn.addEventListener('click', onNo);
+        });
+    },
+
     loadData(key, defaultValue = null) {
         const data = localStorage.getItem(`minihome_${key}`);
         return data ? JSON.parse(data) : defaultValue;
