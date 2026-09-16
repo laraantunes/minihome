@@ -3,6 +3,7 @@
     <div class="widget-header">
         <h2><span class="material-icons-round">edit_note</span> Notas Rápidas</h2>
         <div class="notes-controls">
+            <button id="notes-expand-btn" class="icon-btn" aria-label="Expandir" title="Expandir/Recolher"><span class="material-icons-round">open_in_full</span></button>
             <button id="notes-add-tab" class="icon-btn" aria-label="Nova Aba"><span class="material-icons-round">add</span></button>
             <button id="notes-edit-tab" class="icon-btn" aria-label="Renomear Aba"><span class="material-icons-round">edit</span></button>
             <button id="notes-del-tab" class="icon-btn" aria-label="Excluir Aba" style="color: var(--danger-color);"><span class="material-icons-round">delete</span></button>

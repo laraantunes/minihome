@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addBtn = document.getElementById('notes-add-tab');
     const editBtn = document.getElementById('notes-edit-tab');
     const delBtn = document.getElementById('notes-del-tab');
+    const expandBtn = document.getElementById('notes-expand-btn');
     
     const modal = document.getElementById('notes-modal');
     const modalTitle = document.getElementById('notes-modal-title');
@@ -17,6 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let notes = App.loadData('notes', [{ id: Date.now(), title: 'Geral', content: '' }]);
     let activeId = notes[0]?.id;
     let modalMode = 'add'; // 'add' or 'edit'
+    
+    let isDraggingNote = false;
+    let dragStartIdxNote;
 
     function saveNotes() {
         App.saveData('notes', notes);
@@ -24,11 +28,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTabs() {
         tabsContainer.innerHTML = '';
-        notes.forEach(note => {
+        notes.forEach((note, index) => {
             const btn = document.createElement('button');
             btn.className = `note-tab ${note.id === activeId ? 'active' : ''}`;
             btn.textContent = note.title;
+            
+            // Drag and Drop
+            btn.setAttribute('draggable', 'true');
+            btn.setAttribute('data-index', index);
+            
+            btn.addEventListener('dragstart', (e) => {
+                isDraggingNote = true;
+                dragStartIdxNote = +e.currentTarget.getAttribute('data-index');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            
+            btn.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            });
+            
+            btn.addEventListener('dragenter', (e) => {
+                e.currentTarget.style.opacity = '0.5';
+            });
+            
+            btn.addEventListener('dragleave', (e) => {
+                e.currentTarget.style.opacity = '1';
+            });
+            
+            btn.addEventListener('drop', (e) => {
+                e.stopPropagation();
+                isDraggingNote = false;
+                e.currentTarget.style.opacity = '1';
+                
+                const dragEndIndex = +e.currentTarget.getAttribute('data-index');
+                if (dragStartIdxNote !== dragEndIndex && dragStartIdxNote !== undefined) {
+                    const item = notes.splice(dragStartIdxNote, 1)[0];
+                    notes.splice(dragEndIndex, 0, item);
+                    saveNotes();
+                    renderTabs();
+                }
+                return false;
+            });
+            
+            btn.addEventListener('dragend', (e) => {
+                isDraggingNote = false;
+                e.currentTarget.style.opacity = '1';
+            });
+
             btn.addEventListener('click', () => {
+                if (isDraggingNote) return; // Prevent click on drag
                 activeId = note.id;
                 renderTabs();
                 renderContent();
@@ -94,6 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
             renderTabs();
             renderContent();
             textarea.focus();
+            
+            if (modalMode === 'add') {
+                setTimeout(() => {
+                    tabsContainer.scrollLeft = tabsContainer.scrollWidth;
+                }, 50);
+            }
+            
             closeModal();
         }
     });
@@ -105,6 +162,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Buttons
     addBtn.addEventListener('click', () => openModal('add'));
     editBtn.addEventListener('click', () => openModal('edit'));
+    
+    if (expandBtn) {
+        expandBtn.addEventListener('click', () => {
+            const widget = document.getElementById('notes-widget');
+            if (widget) {
+                widget.classList.toggle('widget-fullscreen');
+                const icon = expandBtn.querySelector('.material-icons-round');
+                if (widget.classList.contains('widget-fullscreen')) {
+                    icon.textContent = 'close_fullscreen';
+                } else {
+                    icon.textContent = 'open_in_full';
+                }
+            }
+        });
+    }
 
     delBtn.addEventListener('click', () => {
         if (notes.length <= 1) return;

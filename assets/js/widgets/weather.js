@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let locations = App.loadData('weather_locs', []);
     let lastWeatherResults = [];
+    let isDraggingWeather = false;
+    let dragStartIdxWeather;
     const forecastModal = document.getElementById('weather-forecast-modal');
     const forecastModalClose = document.getElementById('forecast-modal-close');
     const forecastModalBody = document.getElementById('forecast-modal-body');
@@ -109,7 +111,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const div = document.createElement('div');
                 div.className = 'weather-list-item';
+                div.setAttribute('draggable', 'true');
+                div.setAttribute('data-index', i);
+                
                 div.innerHTML = `
+                    <span class="material-icons-round" style="cursor: grab; color: var(--text-muted); font-size: 1.1rem; margin-right: 4px;">drag_indicator</span>
                     <div class="weather-list-info">
                         <span class="weather-list-name">${locations[i].name}</span>
                         <span class="weather-list-desc" style="display: flex; align-items: center; gap: 4px;">
@@ -123,6 +129,46 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="icon-btn weather-remove" data-index="${i}" title="Remover"><span class="material-icons-round" style="font-size:1rem;">delete</span></button>
                     </div>
                 `;
+                
+                div.addEventListener('dragstart', (e) => {
+                    isDraggingWeather = true;
+                    dragStartIdxWeather = +e.currentTarget.getAttribute('data-index');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                
+                div.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    return false;
+                });
+                
+                div.addEventListener('dragenter', (e) => {
+                    e.currentTarget.classList.add('drag-over');
+                });
+                
+                div.addEventListener('dragleave', (e) => {
+                    e.currentTarget.classList.remove('drag-over');
+                });
+                
+                div.addEventListener('drop', (e) => {
+                    e.stopPropagation();
+                    isDraggingWeather = false;
+                    e.currentTarget.classList.remove('drag-over');
+                    
+                    const dragEndIndex = +e.currentTarget.getAttribute('data-index');
+                    if (dragStartIdxWeather !== dragEndIndex && dragStartIdxWeather !== undefined && dragStartIdxWeather >= 1 && dragEndIndex >= 1) {
+                        const item = locations.splice(dragStartIdxWeather, 1)[0];
+                        locations.splice(dragEndIndex, 0, item);
+                        App.saveData('weather_locs', locations);
+                        refreshAllWeather();
+                    }
+                    return false;
+                });
+                
+                div.addEventListener('dragend', (e) => {
+                    isDraggingWeather = false;
+                });
+                
                 UI.citiesList.appendChild(div);
             }
 

@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="material-icons-round drag-handle" title="Mover tarefa" style="cursor: grab; color: var(--text-muted); font-size: 1.1rem; margin-right: 4px;">drag_indicator</span>
                 <label class="todo-item-label" style="flex: 1; display: flex; align-items: center; min-width: 0;">
                     <input type="checkbox" class="todo-check" data-index="${index}" ${todo.done ? 'checked' : ''}>
-                    <span class="todo-text" spellcheck="false" data-index="${index}" style="outline: none; flex: 1; padding: 2px 4px; border-radius: 4px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${todo.text}</span>
+                    <span class="todo-text" spellcheck="false" data-index="${index}" style="outline: none; flex: 1; padding: 2px 4px; border-radius: 4px; min-width: 0; white-space: normal; word-break: break-word;">${todo.text}</span>
                 </label>
                 <div style="display: flex; gap: 4px;">
                     <button class="icon-btn todo-edit" data-index="${index}" title="Editar"><span class="material-icons-round" style="font-size: 1.1rem;">edit</span></button>
@@ -116,10 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idx = e.target.getAttribute('data-index');
                 const newText = e.target.innerText.trim();
                 
-                // Restaura o visual truncado
-                e.target.style.whiteSpace = 'nowrap';
-                e.target.style.textOverflow = 'ellipsis';
-                e.target.style.overflow = 'hidden';
+                // Estilo mantido como normal
+                e.target.style.whiteSpace = 'normal';
+                e.target.style.wordBreak = 'break-word';
 
                 if (newText !== todos[idx].text) {
                     if (newText === '') {
@@ -260,6 +259,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
             } else {
                 fallbackCopyTextToClipboard(mdContent);
+            }
+        });
+    }
+
+    // --- Expand Logic ---
+    const expandBtn = document.getElementById('todo-expand-btn');
+    if (expandBtn) {
+        expandBtn.addEventListener('click', () => {
+            const widget = document.getElementById('todo-widget');
+            if (widget) {
+                widget.classList.toggle('widget-fullscreen');
+                const icon = expandBtn.querySelector('.material-icons-round');
+                if (widget.classList.contains('widget-fullscreen')) {
+                    icon.textContent = 'close_fullscreen';
+                } else {
+                    icon.textContent = 'open_in_full';
+                }
             }
         });
     }
