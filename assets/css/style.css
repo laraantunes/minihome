@@ -1177,3 +1177,36 @@ body.theme-dark .widget.fullscreen .sw-laps li {
 .widget.widget-fullscreen .widget-footer {
     display: none;
 }
+
+/* Screensaver Close Button */
+#screensaver-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    color: white;
+    opacity: 0.5;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+#screensaver-close:hover {
+    opacity: 1;
+}
+
+#screensaver-close .material-icons-round {
+    font-size: 2rem;
+}
+
+
+#screensaver-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    pointer-events: none;
+}
+

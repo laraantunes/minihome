@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSettingsBtn = document.getElementById('close-settings-btn');
     const settingsModal = document.getElementById('settings-modal');
     const themeSelect = document.getElementById('theme-select');
+    const screensaverSelect = document.getElementById('screensaver-select');
     const exportBtn = document.getElementById('export-btn');
     const importBtn = document.getElementById('import-btn');
     const importFile = document.getElementById('import-file');
@@ -10,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open/Close Modal
     settingsBtn.addEventListener('click', () => {
         themeSelect.value = App.getTheme();
+        if (screensaverSelect) {
+            screensaverSelect.value = App.loadData('screensaver_type', 'bolinha');
+        }
         settingsModal.classList.add('active');
     });
 
@@ -35,6 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
     themeSelect.addEventListener('change', (e) => {
         App.setTheme(e.target.value);
     });
+
+    // Screensaver Change
+    if (screensaverSelect) {
+        screensaverSelect.addEventListener('change', (e) => {
+            App.saveData('screensaver_type', e.target.value);
+        });
+    }
 
     // Export Data
     exportBtn.addEventListener('click', () => {

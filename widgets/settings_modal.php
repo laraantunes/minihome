@@ -14,6 +14,17 @@
                     <option value="light">Claro</option>
                 </select>
             </div>
+            
+            <div class="form-group" style="margin-top: 15px;">
+                <label for="screensaver-select">Modelo do Protetor de Tela</label>
+                <select id="screensaver-select">
+                    <option value="bolinha">Bolinha (Padrão)</option>
+                    <option value="matrix">Matrix</option>
+                    <option value="estrelas">Estrelas</option>
+                    <option value="chuva">Chuva</option>
+                    <option value="cobrinha">Cobrinha</option>
+                </select>
+            </div>
 
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin: var(--spacing-lg) 0;">
 

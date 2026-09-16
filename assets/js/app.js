@@ -339,5 +339,17 @@ document.addEventListener('keydown', (e) => {
                 icon.textContent = 'fullscreen';
             }
         });
+        
+        // Exit any expanded widget (Tarefas, Notas, RSS)
+        const expandedWidgets = document.querySelectorAll('.widget.widget-fullscreen');
+        expandedWidgets.forEach(widget => {
+            widget.classList.remove('widget-fullscreen');
+            const icons = widget.querySelectorAll('.material-icons-round');
+            icons.forEach(icon => {
+                if (icon.textContent === 'close_fullscreen') {
+                    icon.textContent = 'open_in_full';
+                }
+            });
+        });
     }
 });

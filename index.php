@@ -85,6 +85,10 @@
 
     <!-- Screensaver Container -->
     <div id="screensaver" class="hidden">
+        <button id="screensaver-close" class="icon-btn" aria-label="Fechar" title="Fechar Protetor de Tela">
+            <span class="material-icons-round">close</span>
+        </button>
+        <canvas id="screensaver-canvas" class="hidden"></canvas>
         <div id="screensaver-ball"></div>
     </div>
 
