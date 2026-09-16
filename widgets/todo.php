@@ -3,9 +3,9 @@
     <div class="widget-header">
         <h2><span class="material-icons-round">check_circle</span> Tarefas</h2>
         <div class="todo-controls" style="display: flex; gap: 4px;">
-            <button id="todo-expand-btn" class="icon-btn" aria-label="Expandir" title="Expandir/Recolher"><span class="material-icons-round">open_in_full</span></button>
             <button id="todo-export-csv" class="icon-btn" aria-label="Exportar CSV" title="Exportar para CSV"><span class="material-icons-round">download</span></button>
             <button id="todo-copy-md" class="icon-btn" aria-label="Copiar Markdown" title="Copiar como Markdown"><span class="material-icons-round">content_copy</span></button>
+            <button id="todo-expand-btn" class="icon-btn" aria-label="Expandir" title="Expandir/Recolher"><span class="material-icons-round">open_in_full</span></button>
         </div>
     </div>
     

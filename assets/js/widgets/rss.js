@@ -21,9 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const delModalConfirm = document.getElementById('rss-del-confirm');
     const delModalCancel = document.getElementById('rss-del-cancel');
     
-    const maxModal = document.getElementById('rss-maximize-modal');
-    const maxModalClose = document.getElementById('rss-maximize-close');
-    const maxModalBody = document.getElementById('rss-maximize-body');
 
     let feeds = App.loadData('rss_feeds', []);
     let activeId = feeds.length > 0 ? feeds[0].id : null;
@@ -267,23 +264,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     maximizeBtn.addEventListener('click', () => {
-        if (feeds.length === 0) return;
-        const activeFeed = feeds.find(f => f.id === activeId);
-        document.getElementById('rss-maximize-title').innerHTML = `<span class="material-icons-round">rss_feed</span> ${activeFeed.title}`;
-        
-        // Clone the content of the feed container (excluding loading and error els)
-        maxModalBody.innerHTML = '';
-        Array.from(feedContainer.children).forEach(child => {
-            if (child !== loadingEl && child !== errorEl && child.tagName === 'A') {
-                maxModalBody.appendChild(child.cloneNode(true));
+        const widget = document.getElementById('rss-widget');
+        if (widget) {
+            widget.classList.toggle('widget-fullscreen');
+            const icon = maximizeBtn.querySelector('.material-icons-round');
+            if (widget.classList.contains('widget-fullscreen')) {
+                icon.textContent = 'close_fullscreen';
+            } else {
+                icon.textContent = 'open_in_full';
             }
-        });
-        
-        maxModal.classList.add('active');
-    });
-    
-    maxModalClose.addEventListener('click', () => {
-        maxModal.classList.remove('active');
+        }
     });
 
     renderTabs();
@@ -294,7 +284,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             if (modal.classList.contains('active')) closeModal();
             if (delModal.classList.contains('active')) delModal.classList.remove('active');
-            if (maxModal.classList.contains('active')) maxModal.classList.remove('active');
         }
     });
 
@@ -305,8 +294,5 @@ document.addEventListener('DOMContentLoaded', () => {
     delModal.addEventListener('click', (e) => {
         if (e.target === delModal) delModal.classList.remove('active');
     });
-    
-    maxModal.addEventListener('click', (e) => {
-        if (e.target === maxModal) maxModal.classList.remove('active');
-    });
+
 });

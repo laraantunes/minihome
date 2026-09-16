@@ -4,10 +4,10 @@
         <h2><span class="material-icons-round">rss_feed</span> Notícias (RSS)</h2>
         <div class="rss-controls notes-controls">
             <button id="rss-reload-btn" class="icon-btn" aria-label="Recarregar"><span class="material-icons-round">refresh</span></button>
-            <button id="rss-maximize-btn" class="icon-btn" aria-label="Maximizar"><span class="material-icons-round">open_in_full</span></button>
             <button id="rss-add-tab" class="icon-btn" aria-label="Nova Assinatura"><span class="material-icons-round">add</span></button>
             <button id="rss-edit-tab" class="icon-btn" aria-label="Editar Assinatura"><span class="material-icons-round">edit</span></button>
             <button id="rss-del-tab" class="icon-btn" aria-label="Excluir Assinatura" style="color: var(--danger-color);"><span class="material-icons-round">delete</span></button>
+            <button id="rss-maximize-btn" class="icon-btn" aria-label="Maximizar"><span class="material-icons-round">open_in_full</span></button>
         </div>
     </div>
     
@@ -57,17 +57,3 @@
     </div>
 </div>
 
-<!-- RSS Maximize Modal -->
-<div id="rss-maximize-modal" class="modal-overlay">
-    <div class="modal-content" style="max-width: 600px; max-height: 90vh; display: flex; flex-direction: column;">
-        <div class="modal-header" style="margin-bottom: var(--spacing-sm);">
-            <h2 id="rss-maximize-title" style="font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
-                <span class="material-icons-round">rss_feed</span> Feed
-            </h2>
-            <button id="rss-maximize-close" class="icon-btn"><span class="material-icons-round">close</span></button>
-        </div>
-        <div id="rss-maximize-body" style="overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 10px; flex-grow: 1;">
-            <!-- Injected via JS -->
-        </div>
-    </div>
-</div>

@@ -1160,9 +1160,12 @@ body.theme-dark .widget.fullscreen .sw-laps li {
 }
 
 .widget.widget-fullscreen .todo-list-container,
-.widget.widget-fullscreen .notes-content {
+.widget.widget-fullscreen .notes-content,
+.widget.widget-fullscreen .rss-content,
+.widget.widget-fullscreen .rss-feed-container {
     max-height: none;
     flex: 1;
+    min-height: 0;
 }
 
 .widget.widget-fullscreen .todo-text,
