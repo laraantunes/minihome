@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let feeds = App.loadData('rss_feeds', []);
     let activeId = feeds.length > 0 ? feeds[0].id : null;
     let modalMode = 'add'; // 'add' or 'edit'
+    
+    let isDraggingRss = false;
+    let dragStartIdxRss;
 
     function saveFeeds() {
         App.saveData('rss_feeds', feeds);
@@ -35,11 +38,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTabs() {
         tabsContainer.innerHTML = '';
-        feeds.forEach(feed => {
+        feeds.forEach((feed, index) => {
             const btn = document.createElement('button');
             btn.className = `note-tab ${feed.id === activeId ? 'active' : ''}`;
             btn.textContent = feed.title;
+            
+            // Drag and Drop
+            btn.setAttribute('draggable', 'true');
+            btn.setAttribute('data-index', index);
+            
+            btn.addEventListener('dragstart', (e) => {
+                isDraggingRss = true;
+                dragStartIdxRss = +e.currentTarget.getAttribute('data-index');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            
+            btn.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            });
+            
+            btn.addEventListener('dragenter', (e) => {
+                e.currentTarget.style.opacity = '0.5';
+            });
+            
+            btn.addEventListener('dragleave', (e) => {
+                e.currentTarget.style.opacity = '1';
+            });
+            
+            btn.addEventListener('drop', (e) => {
+                e.stopPropagation();
+                isDraggingRss = false;
+                e.currentTarget.style.opacity = '1';
+                
+                const dragEndIndex = +e.currentTarget.getAttribute('data-index');
+                if (dragStartIdxRss !== dragEndIndex && dragStartIdxRss !== undefined) {
+                    const item = feeds.splice(dragStartIdxRss, 1)[0];
+                    feeds.splice(dragEndIndex, 0, item);
+                    saveFeeds();
+                    renderTabs();
+                }
+                return false;
+            });
+            
+            btn.addEventListener('dragend', (e) => {
+                isDraggingRss = false;
+                e.currentTarget.style.opacity = '1';
+            });
+
             btn.addEventListener('click', () => {
+                if (isDraggingRss) return; // Prevent click on drag
                 activeId = feed.id;
                 renderTabs();
                 loadFeed();

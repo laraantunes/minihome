@@ -1170,3 +1170,7 @@ body.theme-dark .widget.fullscreen .sw-laps li {
     font-size: 1.2rem;
 }
 
+/* Ocultar icones de rodapé em modo expandido */
+.widget.widget-fullscreen .widget-footer {
+    display: none;
+}
