@@ -18,6 +18,42 @@ document.addEventListener('DOMContentLoaded', () => {
     let links = App.loadData('links', []);
     let activeId = null;
     let modalMode = 'add'; // 'add' or 'edit'
+    
+    let dragStartIndex;
+
+    function handleDragStart(e) {
+        dragStartIndex = +e.currentTarget.getAttribute('data-index');
+        e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+    }
+
+    function handleDragEnter(e) {
+        e.currentTarget.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        e.currentTarget.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.stopPropagation();
+        e.currentTarget.classList.remove('drag-over');
+        
+        const dragEndIndex = +e.currentTarget.getAttribute('data-index');
+        
+        if (dragStartIndex !== dragEndIndex && dragStartIndex !== undefined) {
+            const item = links.splice(dragStartIndex, 1)[0];
+            links.splice(dragEndIndex, 0, item);
+            saveLinks();
+            renderLinks();
+        }
+        return false;
+    }
 
     function saveLinks() {
         App.saveData('links', links);
@@ -30,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             emptyMsg.style.display = 'block';
         } else {
             emptyMsg.style.display = 'none';
-            links.forEach(link => {
+            links.forEach((link, index) => {
                 const li = document.createElement('li');
                 li.style.display = 'flex';
                 li.style.alignItems = 'center';
@@ -38,6 +74,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.style.padding = '8px 12px';
                 li.style.backgroundColor = 'rgba(0,0,0,0.02)';
                 li.style.borderRadius = 'var(--border-radius-sm)';
+                
+                li.setAttribute('draggable', 'true');
+                li.setAttribute('data-index', index);
+                
+                li.addEventListener('dragstart', handleDragStart);
+                li.addEventListener('dragover', handleDragOver);
+                li.addEventListener('drop', handleDrop);
+                li.addEventListener('dragenter', handleDragEnter);
+                li.addEventListener('dragleave', handleDragLeave);
                 
                 // For dark mode
                 if(document.body.classList.contains('theme-dark')) {
@@ -75,6 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 controls.appendChild(editBtn);
                 controls.appendChild(delBtn);
                 
+                const dragHandle = document.createElement('span');
+                dragHandle.className = 'material-icons-round drag-handle';
+                dragHandle.textContent = 'drag_indicator';
+                dragHandle.title = 'Mover link';
+                dragHandle.style.cursor = 'grab';
+                dragHandle.style.color = 'var(--text-muted)';
+                dragHandle.style.fontSize = '1.1rem';
+                dragHandle.style.marginRight = '8px';
+                
+                li.appendChild(dragHandle);
                 li.appendChild(a);
                 li.appendChild(controls);
                 listContainer.appendChild(li);
