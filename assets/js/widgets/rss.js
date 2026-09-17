@@ -190,11 +190,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function openModal(mode) {
         modalMode = mode;
         if (mode === 'add') {
-            modalTitle.textContent = 'Nova Assinatura';
+            modalTitle.textContent = App.i18n('new_subscription');
             modalName.value = '';
             modalUrl.value = '';
         } else {
-            modalTitle.textContent = 'Editar Assinatura';
+            modalTitle.textContent = App.i18n('edit_subscription');
             const activeFeed = feeds.find(f => f.id === activeId);
             modalName.value = activeFeed ? activeFeed.title : '';
             modalUrl.value = activeFeed ? activeFeed.url : '';

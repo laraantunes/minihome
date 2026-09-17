@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const dragHandle = document.createElement('span');
                 dragHandle.className = 'material-icons-round drag-handle';
                 dragHandle.textContent = 'drag_indicator';
-                dragHandle.title = 'Mover link';
+                dragHandle.title = App.i18n('move_link');
                 dragHandle.style.cursor = 'grab';
                 dragHandle.style.color = 'var(--text-muted)';
                 dragHandle.style.fontSize = '1.1rem';
@@ -142,11 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
         activeId = id;
         
         if (mode === 'add') {
-            modalTitle.textContent = 'Novo Link';
+            modalTitle.textContent = App.i18n('new_link');
             modalName.value = '';
             modalUrl.value = '';
         } else {
-            modalTitle.textContent = 'Editar Link';
+            modalTitle.textContent = App.i18n('edit_link');
             const link = links.find(l => l.id === id);
             modalName.value = link ? link.title : '';
             modalUrl.value = link ? link.url : '';

@@ -34,15 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const now = new Date();
         
         // Main local time
-        mainTime.textContent = now.toLocaleTimeString('pt-BR');
-        mainDate.textContent = now.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        mainTime.textContent = now.toLocaleTimeString(App.getLang());
+        mainDate.textContent = now.toLocaleDateString(App.getLang(), { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
         // Extra timezones
         tzList.innerHTML = '';
         extraZones.forEach((tz, index) => {
             try {
                 // Get time and short timezone name (e.g. BRT, EST)
-                const formatted = new Intl.DateTimeFormat('pt-BR', {
+                const formatted = new Intl.DateTimeFormat(App.getLang(), {
                     timeZone: tz,
                     hour: '2-digit',
                     minute: '2-digit',

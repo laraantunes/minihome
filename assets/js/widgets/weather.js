@@ -29,6 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const forecastModalBody = document.getElementById('forecast-modal-body');
     const forecastModalTitle = document.getElementById('forecast-modal-title');
 
+    const getLocName = (name) => {
+        const defaultNames = ['Minha Localização', 'Localização Atual', 'My Location', 'Mi Ubicación'];
+        return defaultNames.includes(name) ? App.i18n('my_location_name') : name;
+    };
+
     function showState(state) {
         UI.loading.classList.add('hidden');
         UI.error.classList.add('hidden');
@@ -59,21 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const weatherCodes = {
-        0: 'Limpo', 1: 'Limpo', 2: 'Parc. Nublado', 3: 'Nublado',
-        45: 'Nevoeiro', 48: 'Nevoeiro', 
-        51: 'Chuvisco', 53: 'Chuvisco', 55: 'Chuvisco',
-        56: 'Chuvisco Cong.', 57: 'Chuvisco Cong.',
-        61: 'Chuva Leve', 63: 'Chuva Mod.', 65: 'Chuva Forte',
-        66: 'Chuva Cong.', 67: 'Chuva Cong.',
-        71: 'Neve', 73: 'Neve', 75: 'Neve', 77: 'Neve',
-        80: 'Pancadas', 81: 'Pancadas', 82: 'Pancadas Fortes',
-        85: 'Nevasca', 86: 'Nevasca Forte',
-        95: 'Trovoada', 96: 'Trovoada/Granizo', 99: 'Trovoada/Granizo'
+        0: App.i18n('weather_clear'), 1: App.i18n('weather_clear'), 2: App.i18n('weather_partly_cloudy'), 3: App.i18n('weather_cloudy'),
+        45: App.i18n('weather_fog'), 48: App.i18n('weather_fog'), 
+        51: App.i18n('weather_drizzle'), 53: App.i18n('weather_drizzle'), 55: App.i18n('weather_drizzle'),
+        56: App.i18n('weather_freezing_drizzle'), 57: App.i18n('weather_freezing_drizzle'),
+        61: App.i18n('weather_light_rain'), 63: App.i18n('weather_rain'), 65: App.i18n('weather_heavy_rain'),
+        66: App.i18n('weather_freezing_rain'), 67: App.i18n('weather_freezing_rain'),
+        71: App.i18n('weather_snow'), 73: App.i18n('weather_snow'), 75: App.i18n('weather_snow'), 77: App.i18n('weather_snow'),
+        80: App.i18n('weather_showers'), 81: App.i18n('weather_showers'), 82: App.i18n('weather_heavy_showers'),
+        85: App.i18n('weather_blizzard'), 86: App.i18n('weather_heavy_blizzard'),
+        95: App.i18n('weather_thunderstorm'), 96: App.i18n('weather_thunderstorm_hail'), 99: App.i18n('weather_thunderstorm_hail')
     };
 
     async function fetchWeatherData(lat, lon) {
         const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto&forecast_days=10`);
-        if (!response.ok) throw new Error('Falha na API de clima');
+        if (!response.ok) throw new Error(App.i18n('api_weather_fail'));
         return await response.json();
     }
 
@@ -93,9 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const mainWeather = results[0].current_weather;
             const mainDaily = results[0].daily;
             UI.tempVal.textContent = Math.round(mainWeather.temperature);
-            UI.descVal.textContent = weatherCodes[mainWeather.weathercode] || 'Desc.';
+            UI.descVal.textContent = weatherCodes[mainWeather.weathercode] || App.i18n('desc_short');
             if (UI.iconVal) UI.iconVal.textContent = getWeatherIcon(mainWeather.weathercode);
-            UI.cityVal.textContent = locations[0].name;
+
+            UI.cityVal.textContent = getLocName(locations[0].name);
             UI.maxVal.textContent = Math.round(mainDaily.temperature_2m_max[0]);
             UI.minVal.textContent = Math.round(mainDaily.temperature_2m_min[0]);
 
@@ -107,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const temp = Math.round(weather.temperature);
                 const max = Math.round(daily.temperature_2m_max[0]);
                 const min = Math.round(daily.temperature_2m_min[0]);
-                const desc = weatherCodes[weather.weathercode] || 'Desc.';
+                const desc = weatherCodes[weather.weathercode] || App.i18n('desc_short');
                 
                 const div = document.createElement('div');
                 div.className = 'weather-list-item';
@@ -117,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 div.innerHTML = `
                     <span class="material-icons-round" style="cursor: grab; color: var(--text-muted); font-size: 1.1rem; margin-right: 4px;">drag_indicator</span>
                     <div class="weather-list-info">
-                        <span class="weather-list-name">${locations[i].name}</span>
+                        <span class="weather-list-name">${getLocName(locations[i].name)}</span>
                         <span class="weather-list-desc" style="display: flex; align-items: center; gap: 4px;">
                             <span class="material-icons-round" style="font-size: 0.9rem;">${getWeatherIcon(weather.weathercode)}</span> 
                             ${desc} • ${max}°/${min}°
@@ -125,8 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <span class="weather-list-temp" style="margin-left: auto; margin-right: 10px;">${temp}°C</span>
                     <div style="display: flex;">
-                        <button class="icon-btn weather-forecast-btn" data-index="${i}" title="Previsão 10 dias"><span class="material-icons-round" style="font-size:1rem;">calendar_month</span></button>
-                        <button class="icon-btn weather-remove" data-index="${i}" title="Remover"><span class="material-icons-round" style="font-size:1rem;">delete</span></button>
+                        <button class="icon-btn weather-forecast-btn" data-index="${i}" title="${App.i18n('forecast_10d')}"><span class="material-icons-round" style="font-size:1rem;">calendar_month</span></button>
+                        <button class="icon-btn weather-remove" data-index="${i}" title="${App.i18n('remove')}"><span class="material-icons-round" style="font-size:1rem;">delete</span></button>
                     </div>
                 `;
                 
@@ -191,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             showState('display');
         } catch (err) {
-            UI.errorMsg.textContent = 'Erro ao atualizar clima.';
+            UI.errorMsg.textContent = App.i18n('error_weather_update');
             showState('error');
         }
     }
@@ -206,17 +212,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = data.results[0];
                 addLocation(result.latitude, result.longitude, result.name);
             } else {
-                throw new Error('Cidade não encontrada.');
+                throw new Error(App.i18n('city_not_found'));
             }
         } catch (err) {
-            UI.errorMsg.textContent = err.message || 'Erro na busca.';
+            UI.errorMsg.textContent = err.message || App.i18n('error_search');
             showState('error');
         }
     }
 
     function getDayOfWeek(dateString) {
         const date = new Date(dateString + 'T12:00:00');
-        const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+        const days = [App.i18n('week_sun'), App.i18n('week_mon'), App.i18n('week_tue'), App.i18n('week_wed'), App.i18n('week_thu'), App.i18n('week_fri'), App.i18n('week_sat')];
         return days[date.getDay()];
     }
 
@@ -233,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = lastWeatherResults[index];
         const daily = data.daily;
         
-        forecastModalTitle.innerHTML = `<span class="material-icons-round">calendar_month</span> ${loc.name} - 10 Dias`;
+        forecastModalTitle.innerHTML = `<span class="material-icons-round">calendar_month</span> ${getLocName(loc.name)} - ${App.i18n('days_10')}`;
         forecastModalBody.innerHTML = '';
         
         for (let i = 0; i < daily.time.length; i++) {
@@ -241,10 +247,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const max = Math.round(daily.temperature_2m_max[i]);
             const min = Math.round(daily.temperature_2m_min[i]);
             const code = daily.weathercode[i];
-            const desc = weatherCodes[code] || 'Desc.';
+            const desc = weatherCodes[code] || App.i18n('desc_short');
             
             const isToday = i === 0;
-            const dayLabel = isToday ? 'Hoje' : getDayOfWeek(date);
+            const dayLabel = isToday ? App.i18n('today') : getDayOfWeek(date);
             
             const item = document.createElement('div');
             item.className = 'weather-list-item';
@@ -306,18 +312,18 @@ document.addEventListener('DOMContentLoaded', () => {
             navigator.geolocation.getCurrentPosition(
                 position => {
                     if (isFirstTime) {
-                        locations = [{ lat: position.coords.latitude, lon: position.coords.longitude, name: 'Localização Atual' }];
+                        locations = [{ lat: position.coords.latitude, lon: position.coords.longitude, name: App.i18n('current_location') }];
                         App.saveData('weather_locs', locations);
                         refreshAllWeather();
                     } else {
-                        addLocation(position.coords.latitude, position.coords.longitude, 'Minha Localização');
+                        addLocation(position.coords.latitude, position.coords.longitude, App.i18n('my_location_name'));
                     }
                 },
                 err => {
                     if (isFirstTime) {
                         showState('form');
                     } else {
-                        alert('Permissão de localização negada.');
+                        alert(App.i18n('loc_permission_denied'));
                         showState('display');
                     }
                 }
@@ -335,7 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (locations.length > 0) {
             showState('display');
         } else {
-            alert('Adicione pelo menos uma cidade.');
+            alert(App.i18n('add_one_city'));
         }
     });
 

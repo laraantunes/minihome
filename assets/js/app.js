@@ -4,6 +4,8 @@
  */
 
 const App = {
+    i18nData: window.I18N_PRELOAD || {},
+
     init() {
         this.applyTheme();
         
@@ -12,6 +14,20 @@ const App = {
             this.initWidgetsUI();
             // Widgets will self-initialize in their own scripts
         });
+    },
+
+    i18n(key) {
+        return this.i18nData[key] !== undefined ? this.i18nData[key] : key;
+    },
+
+    getLang() {
+        return localStorage.getItem('minihome_lang') || 'pt-br';
+    },
+
+    setLang(lang) {
+        localStorage.setItem('minihome_lang', lang);
+        document.cookie = `minihome_lang=${lang};path=/;max-age=31536000`;
+        window.location.reload();
     },
 
     initWidgetsUI() {
@@ -56,12 +72,12 @@ const App = {
             const dragBtn = document.createElement('button');
             dragBtn.className = 'icon-btn drag-handle';
             dragBtn.innerHTML = '<span class="material-icons-round">drag_indicator</span>';
-            dragBtn.title = 'Mover widget';
+            dragBtn.title = App.i18n('move_widget');
             
             const hideBtn = document.createElement('button');
             hideBtn.className = 'icon-btn hide-widget-btn';
             hideBtn.innerHTML = '<span class="material-icons-round">visibility_off</span>';
-            hideBtn.title = 'Ocultar widget';
+            hideBtn.title = App.i18n('hide_widget');
             
             hideBtn.addEventListener('click', () => {
                 widget.classList.add('hidden');
@@ -220,8 +236,8 @@ const App = {
                 if (navigator.canShare({ files: [file] })) {
                     await navigator.share({
                         files: [file],
-                        title: 'Backup Minihome',
-                        text: 'Meu backup de configurações e dados do minihome.'
+                        title: App.i18n('backup_title'),
+                        text: App.i18n('backup_desc')
                     });
                     return;
                 }
@@ -254,10 +270,10 @@ const App = {
                     }
                     resolve();
                 } catch (err) {
-                    reject('Arquivo JSON inválido.');
+                    reject(App.i18n('invalid_json'));
                 }
             };
-            reader.onerror = () => reject('Erro ao ler arquivo.');
+            reader.onerror = () => reject(App.i18n('error_reading_file'));
             reader.readAsText(file);
         });
     },

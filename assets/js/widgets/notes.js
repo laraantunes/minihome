@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const delModalConfirm = document.getElementById('notes-del-confirm');
     const delModalCancel = document.getElementById('notes-del-cancel');
 
-    let notes = App.loadData('notes', [{ id: Date.now(), title: 'Geral', content: '' }]);
+    let notes = App.loadData('notes', [{ id: Date.now(), title: App.i18n('general'), content: '' }]);
     let activeId = notes[0]?.id;
     let modalMode = 'add'; // 'add' or 'edit'
     
@@ -112,10 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function openModal(mode) {
         modalMode = mode;
         if (mode === 'add') {
-            modalTitle.textContent = 'Nova Aba';
+            modalTitle.textContent = App.i18n('new_tab');
             modalInput.value = '';
         } else {
-            modalTitle.textContent = 'Renomear Aba';
+            modalTitle.textContent = App.i18n('rename_tab');
             const activeNote = notes.find(n => n.id === activeId);
             modalInput.value = activeNote ? activeNote.title : '';
         }
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (notes.length === 0) {
-        notes.push({ id: Date.now(), title: 'Geral', content: '' });
+        notes.push({ id: Date.now(), title: App.i18n('general'), content: '' });
         activeId = notes[0].id;
         saveNotes();
     }

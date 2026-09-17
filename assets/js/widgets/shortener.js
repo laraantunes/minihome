@@ -52,13 +52,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultContainer.style.display = 'flex';
                 copyBtn.innerHTML = '<span class="material-icons-round">content_copy</span>';
             } else {
-                errorMsg.textContent = data.error || 'Ocorreu um erro ao encurtar o link.';
+                errorMsg.textContent = data.error || App.i18n('shortener_error');
                 errorMsg.style.display = 'block';
                 resultContainer.style.display = 'flex';
                 resultRow.style.display = 'none';
             }
         } catch (err) {
-            errorMsg.textContent = 'Erro de conexão.';
+            errorMsg.textContent = App.i18n('connection_error');
             errorMsg.style.display = 'block';
             resultContainer.style.display = 'flex';
             resultRow.style.display = 'none';
@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     copyBtn.innerHTML = '<span class="material-icons-round">content_copy</span>';
                 }, 2000);
             }).catch(err => {
-                console.error('Falha ao copiar: ', err);
+                console.error(App.i18n('copy_fail'), err);
             });
         }
     });

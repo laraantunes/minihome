@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeSettingsBtn = document.getElementById('close-settings-btn');
     const settingsModal = document.getElementById('settings-modal');
     const themeSelect = document.getElementById('theme-select');
+    const langSelect = document.getElementById('lang-select');
     const screensaverSelect = document.getElementById('screensaver-select');
     const exportBtn = document.getElementById('export-btn');
     const importBtn = document.getElementById('import-btn');
@@ -11,6 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open/Close Modal
     settingsBtn.addEventListener('click', () => {
         themeSelect.value = App.getTheme();
+        if (langSelect) {
+            langSelect.value = App.getLang();
+        }
         if (screensaverSelect) {
             screensaverSelect.value = App.loadData('screensaver_type', 'bolinha');
         }
@@ -40,6 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
         App.setTheme(e.target.value);
     });
 
+    // Language Change
+    if (langSelect) {
+        langSelect.addEventListener('change', (e) => {
+            App.setLang(e.target.value);
+        });
+    }
+
     // Screensaver Change
     if (screensaverSelect) {
         screensaverSelect.addEventListener('change', (e) => {
@@ -63,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await App.importData(file);
-            App.showToast('Dados importados com sucesso! A página será recarregada.');
+            App.showToast(App.i18n('import_success_reload'));
             setTimeout(() => window.location.reload(), 2000);
         } catch (err) {
             App.showToast(err);
@@ -79,13 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (updateBtn) {
         updateBtn.addEventListener('click', async () => {
-            if (!(await App.confirm('Deseja iniciar a verificação e atualização do sistema?'))) {
+            if (!(await App.confirm(App.i18n('confirm_update_system')))) {
                 return;
             }
 
             const originalHtml = updateBtn.innerHTML;
             updateBtn.disabled = true;
-            updateBtn.innerHTML = '<span class="material-icons-round spinning">sync</span> Atualizando...';
+            updateBtn.innerHTML = '<span class="material-icons-round spinning">sync</span> ' + App.i18n('updating');
             updateMsg.textContent = '';
             updateMsg.style.color = 'var(--text-primary)';
 
@@ -99,11 +110,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => window.location.reload(), 3000);
                 } else {
                     updateMsg.style.color = 'var(--danger-color)';
-                    updateMsg.textContent = data.message || 'Erro desconhecido';
+                    updateMsg.textContent = data.message || App.i18n('unknown_error');
                 }
             } catch (err) {
                 updateMsg.style.color = 'var(--danger-color)';
-                updateMsg.textContent = 'Falha ao se comunicar com o servidor.';
+                updateMsg.textContent = App.i18n('server_comm_fail');
             } finally {
                 updateBtn.disabled = false;
                 updateBtn.innerHTML = originalHtml;

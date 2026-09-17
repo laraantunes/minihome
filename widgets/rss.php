@@ -1,13 +1,13 @@
 <!-- RSS Widget -->
 <div class="widget" id="rss-widget">
     <div class="widget-header">
-        <h2><span class="material-icons-round">rss_feed</span> Notícias (RSS)</h2>
+        <h2><span class="material-icons-round">rss_feed</span> <?= i18n($user_lang, 'news_rss') ?></h2>
         <div class="rss-controls notes-controls">
-            <button id="rss-reload-btn" class="icon-btn" aria-label="Recarregar"><span class="material-icons-round">refresh</span></button>
-            <button id="rss-add-tab" class="icon-btn" aria-label="Nova Assinatura"><span class="material-icons-round">add</span></button>
-            <button id="rss-edit-tab" class="icon-btn" aria-label="Editar Assinatura"><span class="material-icons-round">edit</span></button>
-            <button id="rss-del-tab" class="icon-btn" aria-label="Excluir Assinatura" style="color: var(--danger-color);"><span class="material-icons-round">delete</span></button>
-            <button id="rss-maximize-btn" class="icon-btn" aria-label="Maximizar"><span class="material-icons-round">open_in_full</span></button>
+            <button id="rss-reload-btn" class="icon-btn" aria-label="<?= i18n($user_lang, 'reload') ?>"><span class="material-icons-round">refresh</span></button>
+            <button id="rss-add-tab" class="icon-btn" aria-label="<?= i18n($user_lang, 'new_subscription') ?>"><span class="material-icons-round">add</span></button>
+            <button id="rss-edit-tab" class="icon-btn" aria-label="<?= i18n($user_lang, 'edit_subscription') ?>"><span class="material-icons-round">edit</span></button>
+            <button id="rss-del-tab" class="icon-btn" aria-label="<?= i18n($user_lang, 'delete_subscription') ?>" style="color: var(--danger-color);"><span class="material-icons-round">delete</span></button>
+            <button id="rss-maximize-btn" class="icon-btn" aria-label="<?= i18n($user_lang, 'maximize') ?>"><span class="material-icons-round">open_in_full</span></button>
         </div>
     </div>
     
@@ -18,8 +18,8 @@
         
         <div id="rss-feed-container" class="rss-feed-container" style="overflow-y: auto; flex-grow: 1; padding-top: 10px; display: flex; flex-direction: column; gap: 10px;">
             <!-- Feed items added via JS -->
-            <div id="rss-loading" style="text-align: center; color: var(--text-secondary); display: none; padding: 20px;">Carregando...</div>
-            <div id="rss-error" style="text-align: center; color: var(--danger-color); display: none; padding: 20px;">Erro ao carregar o feed.</div>
+            <div id="rss-loading" style="text-align: center; color: var(--text-secondary); display: none; padding: 20px;"><?= i18n($user_lang, 'loading') ?></div>
+            <div id="rss-error" style="text-align: center; color: var(--danger-color); display: none; padding: 20px;"><?= i18n($user_lang, 'feed_error') ?></div>
         </div>
     </div>
 </div>
@@ -28,17 +28,17 @@
 <div id="rss-modal" class="modal-overlay">
     <div class="modal-content" style="max-width: 350px;">
         <div class="modal-header" style="margin-bottom: 15px;">
-            <h2 id="rss-modal-title" style="font-size: 1.1rem;">Nova Assinatura RSS</h2>
+            <h2 id="rss-modal-title" style="font-size: 1.1rem;"><?= i18n($user_lang, 'new_rss_subscription') ?></h2>
         </div>
         <div class="form-group" style="margin-bottom: 10px;">
-            <input type="text" id="rss-modal-name" placeholder="Nome do Feed (ex: Meu Feed)">
+            <input type="text" id="rss-modal-name" placeholder="<?= i18n($user_lang, 'feed_name_ex') ?>">
         </div>
         <div class="form-group">
-            <input type="url" id="rss-modal-url" placeholder="URL do XML (ex: https://meufeed/rss)">
+            <input type="url" id="rss-modal-url" placeholder="<?= i18n($user_lang, 'xml_url_ex') ?>">
         </div>
         <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 15px;">
-            <button id="rss-modal-cancel" class="btn btn-secondary">Cancelar</button>
-            <button id="rss-modal-save" class="btn btn-primary">Salvar</button>
+            <button id="rss-modal-cancel" class="btn btn-secondary"><?= i18n($user_lang, 'cancel') ?></button>
+            <button id="rss-modal-save" class="btn btn-primary"><?= i18n($user_lang, 'save') ?></button>
         </div>
     </div>
 </div>
@@ -47,12 +47,12 @@
 <div id="rss-del-modal" class="modal-overlay">
     <div class="modal-content" style="max-width: 350px;">
         <div class="modal-header" style="margin-bottom: 15px;">
-            <h2 style="font-size: 1.1rem;">Excluir Assinatura?</h2>
+            <h2 style="font-size: 1.1rem;"><?= i18n($user_lang, 'delete_subscription_q') ?></h2>
         </div>
-        <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-secondary);">Tem certeza que deseja excluir esta assinatura RSS?</p>
+        <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--text-secondary);"><?= i18n($user_lang, 'delete_subscription_confirm') ?></p>
         <div style="display: flex; gap: 8px; justify-content: flex-end;">
-            <button id="rss-del-cancel" class="btn btn-secondary">Cancelar</button>
-            <button id="rss-del-confirm" class="btn btn-primary" style="background-color: var(--danger-color);">Excluir</button>
+            <button id="rss-del-cancel" class="btn btn-secondary"><?= i18n($user_lang, 'cancel') ?></button>
+            <button id="rss-del-confirm" class="btn btn-primary" style="background-color: var(--danger-color);"><?= i18n($user_lang, 'delete') ?></button>
         </div>
     </div>
 </div>

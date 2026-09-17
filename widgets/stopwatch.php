@@ -1,8 +1,8 @@
 <!-- Stopwatch Widget -->
 <div class="widget" id="stopwatch-widget">
     <div class="widget-header">
-        <h2><span class="material-icons-round">timer_10</span> Cronômetro</h2>
-        <button class="icon-btn fullscreen-btn" aria-label="Tela Cheia" title="Tela Cheia">
+        <h2><span class="material-icons-round">timer_10</span> <?= i18n($user_lang, 'stopwatch') ?></h2>
+        <button class="icon-btn fullscreen-btn" aria-label="<?= i18n($user_lang, 'fullscreen') ?>" title="<?= i18n($user_lang, 'fullscreen') ?>">
             <span class="material-icons-round">fullscreen</span>
         </button>
     </div>

@@ -1,5 +1,9 @@
+<?php
+$user_lang = $_COOKIE['minihome_lang'] ?? 'pt-br';
+require_once __DIR__ . '/i18n.php';
+?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<?= $user_lang ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -16,7 +20,11 @@
     <?php
     require_once __DIR__ . '/version.php';
     $v = $version;
+    $i18n_json = file_exists(__DIR__ . "/lang/{$user_lang}.json") ? file_get_contents(__DIR__ . "/lang/{$user_lang}.json") : '{}';
     ?>
+    <script>
+        window.I18N_PRELOAD = <?= $i18n_json ?>;
+    </script>
     <!-- Main Styles -->
     <link rel="stylesheet" href="assets/css/style.css?v=<?= $v ?>">
 </head>
@@ -26,20 +34,20 @@
     <header class="app-header">
         <div class="logo">
             <span class="material-icons-round">home</span>
-            <h1>Minihome</h1>
+            <h1><?= i18n($user_lang, 'app_title') ?></h1>
         </div>
         <div style="display: flex; gap: var(--spacing-sm);">
-            <button id="widgets-menu-btn" class="icon-btn" aria-label="Widgets">
+            <button id="widgets-menu-btn" class="icon-btn" aria-label="<?= i18n($user_lang, 'widgets') ?>">
                 <span class="material-icons-round">dashboard_customize</span>
             </button>
             <div id="widgets-menu" class="dropdown-menu hidden">
-                <div class="dropdown-header">Widgets</div>
+                <div class="dropdown-header"><?= i18n($user_lang, 'widgets') ?></div>
                 <div id="widgets-menu-list"></div>
             </div>
-            <button id="screensaver-btn" class="icon-btn" aria-label="Protetor de Tela" title="Protetor de Tela">
+            <button id="screensaver-btn" class="icon-btn" aria-label="<?= i18n($user_lang, 'screensaver') ?>" title="<?= i18n($user_lang, 'screensaver') ?>">
                 <span class="material-icons-round">emoji_food_beverage</span>
             </button>
-            <button id="settings-btn" class="icon-btn" aria-label="Configurações">
+            <button id="settings-btn" class="icon-btn" aria-label="<?= i18n($user_lang, 'settings') ?>">
                 <span class="material-icons-round">settings</span>
             </button>
         </div>
@@ -67,13 +75,13 @@
     <div id="confirm-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 400px; text-align: center;">
             <div class="modal-header">
-                <h2>Confirmação</h2>
+                <h2><?= i18n($user_lang, 'confirmation') ?></h2>
             </div>
             <div class="modal-body">
                 <p id="confirm-message" style="margin: 1.5rem 0; font-size: 1.1rem; color: var(--text-primary);"></p>
                 <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 1rem;">
-                    <button id="confirm-no-btn" class="btn" style="background-color: var(--widget-bg); color: var(--text-primary);">Cancelar</button>
-                    <button id="confirm-yes-btn" class="btn btn-primary">Confirmar</button>
+                    <button id="confirm-no-btn" class="btn" style="background-color: var(--widget-bg); color: var(--text-primary);"><?= i18n($user_lang, 'cancel') ?></button>
+                    <button id="confirm-yes-btn" class="btn btn-primary"><?= i18n($user_lang, 'confirm') ?></button>
                 </div>
             </div>
         </div>
@@ -85,7 +93,7 @@
 
     <!-- Screensaver Container -->
     <div id="screensaver" class="hidden">
-        <button id="screensaver-close" class="icon-btn" aria-label="Fechar" title="Fechar Protetor de Tela">
+        <button id="screensaver-close" class="icon-btn" aria-label="<?= i18n($user_lang, 'close') ?>" title="<?= i18n($user_lang, 'close_screensaver') ?>">
             <span class="material-icons-round">close</span>
         </button>
         <canvas id="screensaver-canvas" class="hidden"></canvas>

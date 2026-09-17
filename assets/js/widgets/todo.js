@@ -58,14 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
             li.addEventListener('dragleave', handleDragLeave);
 
             li.innerHTML = `
-                <span class="material-icons-round drag-handle" title="Mover tarefa" style="cursor: grab; color: var(--text-muted); font-size: 1.1rem; margin-right: 4px;">drag_indicator</span>
+                <span class="material-icons-round drag-handle" title="${App.i18n('move_task')}" style="cursor: grab; color: var(--text-muted); font-size: 1.1rem; margin-right: 4px;">drag_indicator</span>
                 <label class="todo-item-label" style="flex: 1; display: flex; align-items: center; min-width: 0;">
                     <input type="checkbox" class="todo-check" data-index="${index}" ${todo.done ? 'checked' : ''}>
                     <span class="todo-text" spellcheck="false" data-index="${index}" style="outline: none; flex: 1; padding: 2px 4px; border-radius: 4px; min-width: 0; white-space: normal; word-break: break-word;">${todo.text}</span>
                 </label>
                 <div style="display: flex; gap: 4px;">
-                    <button class="icon-btn todo-edit" data-index="${index}" title="Editar"><span class="material-icons-round" style="font-size: 1.1rem;">edit</span></button>
-                    <button class="icon-btn todo-delete" data-index="${index}" title="Excluir"><span class="material-icons-round" style="font-size: 1.1rem;">delete</span></button>
+                    <button class="icon-btn todo-edit" data-index="${index}" title="${App.i18n('edit')}"><span class="material-icons-round" style="font-size: 1.1rem;">edit</span></button>
+                    <button class="icon-btn todo-delete" data-index="${index}" title="${App.i18n('delete')}"><span class="material-icons-round" style="font-size: 1.1rem;">delete</span></button>
                 </div>
             `;
             list.appendChild(li);
@@ -169,13 +169,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exportCsvBtn) {
         exportCsvBtn.addEventListener('click', async () => {
             if (todos.length === 0) {
-                App.showToast('Nenhuma tarefa para exportar.');
+                App.showToast(App.i18n('no_tasks_to_export'));
                 return;
             }
             
-            let csvContent = 'Status,Tarefa\n';
+            let csvContent = App.i18n('status_task_csv');
             todos.forEach(todo => {
-                const status = todo.done ? 'Concluída' : 'Pendente';
+                const status = todo.done ? App.i18n('status_done') : App.i18n('status_pending');
                 let text = todo.text.replace(/"/g, '""');
                 if (text.includes(',') || text.includes('"') || text.includes('\n')) {
                     text = `"${text}"`;
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 csvContent += `${status},${text}\n`;
             });
             
-            const fileName = 'tarefas.csv';
+            const fileName = App.i18n('tasks_csv_filename');
             
             // Only try Web Share if File API and Share API are available and we can share a file
             if (window.File && navigator.canShare) {
@@ -192,8 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (navigator.canShare({ files: [file] })) {
                         await navigator.share({
                             files: [file],
-                            title: 'Tarefas',
-                            text: 'Minhas tarefas exportadas.'
+                            title: App.i18n('tasks'),
+                            text: App.i18n('my_tasks_exported')
                         });
                         return;
                     }
@@ -220,11 +220,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (copyMdBtn) {
         copyMdBtn.addEventListener('click', () => {
             if (todos.length === 0) {
-                App.showToast('Nenhuma tarefa para copiar.');
+                App.showToast(App.i18n('no_tasks_to_copy'));
                 return;
             }
             
-            let mdContent = '## Minhas Tarefas\n\n';
+            let mdContent = App.i18n('my_tasks_md');
             todos.forEach(todo => {
                 const checkbox = todo.done ? '[x]' : '[ ]';
                 mdContent += `- ${checkbox} ${todo.text}\n`;
@@ -241,19 +241,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 textArea.select();
                 try {
                     if (document.execCommand('copy')) {
-                        App.showToast('Tarefas copiadas como Markdown!');
+                        App.showToast(App.i18n('tasks_copied_md'));
                     } else {
-                        App.showToast('Não foi possível copiar as tarefas.');
+                        App.showToast(App.i18n('could_not_copy_tasks'));
                     }
                 } catch (err) {
-                    App.showToast('Erro ao copiar as tarefas.');
+                    App.showToast(App.i18n('error_copying_tasks'));
                 }
                 document.body.removeChild(textArea);
             };
 
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(mdContent)
-                    .then(() => App.showToast('Tarefas copiadas como Markdown!'))
+                    .then(() => App.showToast(App.i18n('tasks_copied_md')))
                     .catch(err => {
                         fallbackCopyTextToClipboard(mdContent);
                     });

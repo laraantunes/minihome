@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
         
-        const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const monthNames = [
+            App.i18n('month_1'), App.i18n('month_2'), App.i18n('month_3'), App.i18n('month_4'), 
+            App.i18n('month_5'), App.i18n('month_6'), App.i18n('month_7'), App.i18n('month_8'), 
+            App.i18n('month_9'), App.i18n('month_10'), App.i18n('month_11'), App.i18n('month_12')
+        ];
         
         monthYear.textContent = `${monthNames[month]} ${year}`;
         daysContainer.innerHTML = '';

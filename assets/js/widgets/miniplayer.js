@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="material-icons-round" style="font-size: 1rem; vertical-align: middle; margin-right: 4px;">${item.videoId ? 'play_arrow' : 'playlist_play'}</span>
                     ${label}
                 </div>
-                <button class="icon-btn miniplayer-remove" data-index="${index}" title="Remover" style="padding: 2px;">
+                <button class="icon-btn miniplayer-remove" data-index="${index}" title="${App.i18n('remove')}" style="padding: 2px;">
                     <span class="material-icons-round" style="font-size: 1.1rem; color: var(--text-secondary);">close</span>
                 </button>
             `;
@@ -159,12 +159,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderPlaylist();
             }
         } else {
-            alert('URL do YouTube inválida. Copie o link do vídeo ou playlist.');
+            alert(App.i18n('invalid_youtube_url'));
         }
     });
 
     clearBtn.addEventListener('click', async () => {
-        if (await App.confirm('Tem certeza que deseja limpar a lista de reprodução?')) {
+        if (await App.confirm(App.i18n('clear_list_confirm'))) {
             playlist = [];
             App.saveData('miniplayer_playlist', playlist);
             renderPlaylist();
