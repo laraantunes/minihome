@@ -369,3 +369,44 @@ document.addEventListener('keydown', (e) => {
         });
     }
 });
+
+// Global Click Handler for exiting fullscreen
+document.addEventListener('click', (e) => {
+    // Check if we have any fullscreen widget (.widget-fullscreen is used by Tasks, Notes, RSS)
+    const expandedWidget = document.querySelector('.widget.widget-fullscreen');
+    
+    // Check if we have any fullscreen widget (.fullscreen is used by Timer/Stopwatch)
+    const fullscreenWidget = document.querySelector('.widget.fullscreen');
+    
+    if (expandedWidget || fullscreenWidget) {
+        // If click is inside a modal, do nothing (allow interacting with modals)
+        if (e.target.closest('.modal-overlay.active')) return;
+        
+        // If click is inside the fullscreen widget, do nothing
+        const path = e.composedPath();
+        if (expandedWidget && path.includes(expandedWidget)) return;
+        if (fullscreenWidget && path.includes(fullscreenWidget)) return;
+        
+        // If click is on an expand button itself, do nothing
+        if (e.target.closest('[id$="-expand-btn"]') || e.target.closest('.fullscreen-btn')) return;
+        
+        // Otherwise, close the widgets
+        if (expandedWidget) {
+            expandedWidget.classList.remove('widget-fullscreen');
+            const icons = expandedWidget.querySelectorAll('.material-icons-round');
+            icons.forEach(icon => {
+                if (icon.textContent === 'close_fullscreen') {
+                    icon.textContent = 'open_in_full';
+                }
+            });
+        }
+        
+        if (fullscreenWidget) {
+            fullscreenWidget.classList.remove('fullscreen');
+            const icon = fullscreenWidget.querySelector('.fullscreen-btn .material-icons-round');
+            if (icon) {
+                icon.textContent = 'fullscreen';
+            }
+        }
+    }
+});
