@@ -102,6 +102,7 @@ require_once __DIR__ . '/i18n.php';
 
     <!-- Main JS -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="assets/js/db.js?v=<?= $v ?>"></script>
     <script src="assets/js/app.js?v=<?= $v ?>"></script>
     <script src="assets/js/settings.js?v=<?= $v ?>"></script>
     <!-- Widgets JS -->

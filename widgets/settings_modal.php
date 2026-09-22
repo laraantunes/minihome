@@ -21,7 +21,67 @@
                 <select id="theme-select">
                     <option value="dark"><?= i18n($user_lang, 'theme_dark') ?></option>
                     <option value="light"><?= i18n($user_lang, 'theme_light') ?></option>
+                    <option value="custom"><?= i18n($user_lang, 'theme_custom') ?></option>
                 </select>
+            </div>
+
+            <div id="custom-theme-panel" class="hidden" style="margin-top: 15px; padding: 15px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px;">
+                <h4 style="margin-bottom: 10px; font-size: 0.95rem; font-weight: 600;"><?= i18n($user_lang, 'custom_theme_title') ?></h4>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.8rem; margin-bottom: 0;"><?= i18n($user_lang, 'color_bg') ?></label>
+                        <input type="color" id="color-bg" value="#f4f5f7" style="width: 100%; height: 30px; border: none; cursor: pointer; background: none;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.8rem; margin-bottom: 0;"><?= i18n($user_lang, 'color_widget') ?></label>
+                        <input type="color" id="color-widget" value="#ffffff" style="width: 100%; height: 30px; border: none; cursor: pointer; background: none;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.8rem; margin-bottom: 0;"><?= i18n($user_lang, 'color_text_primary') ?></label>
+                        <input type="color" id="color-text-primary" value="#1e1e1e" style="width: 100%; height: 30px; border: none; cursor: pointer; background: none;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.8rem; margin-bottom: 0;"><?= i18n($user_lang, 'color_text_secondary') ?></label>
+                        <input type="color" id="color-text-secondary" value="#6b7280" style="width: 100%; height: 30px; border: none; cursor: pointer; background: none;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.8rem; margin-bottom: 0;"><?= i18n($user_lang, 'color_accent') ?></label>
+                        <input type="color" id="color-accent" value="#6d1b38" style="width: 100%; height: 30px; border: none; cursor: pointer; background: none;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.8rem; margin-bottom: 0;"><?= i18n($user_lang, 'color_accent_hover') ?></label>
+                        <input type="color" id="color-accent-hover" value="#8e2248" style="width: 100%; height: 30px; border: none; cursor: pointer; background: none;">
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label style="font-size: 0.8rem; margin-bottom: 0;"><?= i18n($user_lang, 'color_border') ?></label>
+                        <input type="color" id="color-border" value="#e5e7eb" style="width: 100%; height: 30px; border: none; cursor: pointer; background: none;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label style="font-size: 0.8rem; margin-bottom: 4px;"><?= i18n($user_lang, 'bg_type') ?></label>
+                    <select id="bg-type-select" style="font-size: 0.85rem; padding: 6px;">
+                        <option value="none"><?= i18n($user_lang, 'bg_none') ?></option>
+                        <option value="url"><?= i18n($user_lang, 'bg_url') ?></option>
+                        <option value="upload"><?= i18n($user_lang, 'bg_upload') ?></option>
+                    </select>
+                </div>
+
+                <div id="bg-url-group" class="form-group hidden" style="margin-bottom: 10px;">
+                    <label style="font-size: 0.8rem; margin-bottom: 4px;"><?= i18n($user_lang, 'bg_url_label') ?></label>
+                    <input type="text" id="bg-url-input" placeholder="https://..." style="width: 100%; padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--widget-bg); color: var(--text-primary); font-size: 0.85rem;">
+                </div>
+
+                <div id="bg-upload-group" class="form-group hidden" style="margin-bottom: 10px;">
+                    <label style="font-size: 0.8rem; margin-bottom: 4px;"><?= i18n($user_lang, 'bg_upload_label') ?></label>
+                    <input type="file" id="bg-upload-input" accept="image/*" style="width: 100%; font-size: 0.8rem; color: var(--text-secondary);">
+                    <div id="bg-upload-status" style="font-size: 0.75rem; color: var(--success-color); margin-top: 4px;"></div>
+                </div>
+
+                <button id="save-custom-theme-btn" class="btn btn-primary" style="width: 100%; margin-top: 10px; padding: 8px;">
+                    <span class="material-icons-round" style="font-size: 18px;">save</span> <?= i18n($user_lang, 'save_custom_theme') ?>
+                </button>
             </div>
             
             <div class="form-group" style="margin-top: 15px;">

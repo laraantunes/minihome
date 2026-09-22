@@ -175,6 +175,49 @@ const App = {
     applyTheme() {
         const theme = this.getTheme();
         document.body.className = `theme-${theme}`;
+
+        let styleTag = document.getElementById('custom-theme-styles');
+        if (styleTag) styleTag.remove();
+        
+        document.body.style.backgroundImage = '';
+        document.body.style.backgroundSize = '';
+        document.body.style.backgroundPosition = '';
+        
+        if (theme === 'custom') {
+            const customData = this.loadData('custom_theme', {});
+            if (customData.colors) {
+                const css = `
+                    body.theme-custom {
+                        --bg-color: ${customData.colors.bg};
+                        --widget-bg: ${customData.colors.widget};
+                        --text-primary: ${customData.colors.textPrimary};
+                        --text-secondary: ${customData.colors.textSecondary};
+                        --accent-color: ${customData.colors.accent};
+                        --accent-hover: ${customData.colors.accentHover};
+                        --border-color: ${customData.colors.border};
+                    }
+                `;
+                styleTag = document.createElement('style');
+                styleTag.id = 'custom-theme-styles';
+                styleTag.textContent = css;
+                document.head.appendChild(styleTag);
+            }
+            
+            if (customData.bgType === 'url' && customData.bgUrl) {
+                document.body.style.backgroundImage = `url('${customData.bgUrl}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+            } else if (customData.bgType === 'upload' && window.MinihomeDB) {
+                window.MinihomeDB.loadImage('bg_image').then(blob => {
+                    if (blob) {
+                        const url = URL.createObjectURL(blob);
+                        document.body.style.backgroundImage = `url('${url}')`;
+                        document.body.style.backgroundSize = 'cover';
+                        document.body.style.backgroundPosition = 'center';
+                    }
+                }).catch(err => console.error("Error loading bg image", err));
+            }
+        }
     },
 
     // Local Storage Helpers
