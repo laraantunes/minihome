@@ -94,6 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateMatrix() {
+        if (!state.frameCount) state.frameCount = 0;
+        state.frameCount++;
+        // Atualiza a animação a cada 4 frames para ficar mais lento sem borrar
+        if (state.frameCount < 4) return;
+        state.frameCount = 0;
+
         ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
@@ -142,8 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ctx.fillStyle = "#FFF";
             ctx.fill();
             
-            star.x += star.vx / 30;
-            star.y += star.vy / 30;
+            star.x += star.vx / 100;
+            star.y += star.vy / 100;
             
             if (star.x < 0 || star.x > canvas.width) star.vx = -star.vx;
             if (star.y < 0 || star.y > canvas.height) star.vy = -star.vy;
@@ -161,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
                 length: Math.random() * 20 + 10,
-                speed: Math.random() * 10 + 5
+                speed: Math.random() * 2 + 1
             });
         }
         
@@ -207,7 +213,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 {x: 8, y: 10}
             ],
             dir: {x: 1, y: 0},
-            food: {x: Math.floor(Math.random() * (canvas.width/gridSize)), y: Math.floor(Math.random() * (canvas.height/gridSize))},
+            food: {
+                x: Math.floor(Math.random() * Math.floor(canvas.width/gridSize)), 
+                y: Math.floor(Math.random() * Math.floor(canvas.height/gridSize))
+            },
             frameCount: 0
         };
         ctx.fillStyle = "#000";
@@ -216,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateCobrinha() {
         state.frameCount++;
-        if (state.frameCount < 5) return;
+        if (state.frameCount < 8) return;
         state.frameCount = 0;
 
         ctx.fillStyle = "#000";
@@ -234,17 +243,25 @@ document.addEventListener('DOMContentLoaded', () => {
         
         possibleDirs = possibleDirs.filter(d => !(d.x === -state.dir.x && d.y === -state.dir.y));
         possibleDirs = possibleDirs.filter(d => {
-            const nx = head.x + d.x;
-            const ny = head.y + d.y;
-            return nx >= 0 && nx < cols && ny >= 0 && ny < rows;
+            let nx = head.x + d.x;
+            let ny = head.y + d.y;
+            if (nx >= cols) nx = 0;
+            if (nx < 0) nx = cols - 1;
+            if (ny >= rows) ny = 0;
+            if (ny < 0) ny = rows - 1;
+            return !state.snake.some(s => s.x === nx && s.y === ny);
         });
 
         if (possibleDirs.length > 0) {
             let bestDir = possibleDirs[0];
             let minDist = Infinity;
             possibleDirs.forEach(d => {
-                const nx = head.x + d.x;
-                const ny = head.y + d.y;
+                let nx = head.x + d.x;
+                let ny = head.y + d.y;
+                if (nx >= cols) nx = 0;
+                if (nx < 0) nx = cols - 1;
+                if (ny >= rows) ny = 0;
+                if (ny < 0) ny = rows - 1;
                 const dist = Math.abs(nx - state.food.x) + Math.abs(ny - state.food.y);
                 if (dist < minDist) {
                     minDist = dist;
@@ -270,13 +287,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newHead.y >= rows) newHead.y = 0;
         if (newHead.y < 0) newHead.y = rows - 1;
         
+        // Verifica colisão com o próprio corpo
+        const isCollision = state.snake.some(segment => segment.x === newHead.x && segment.y === newHead.y);
+        if (isCollision) {
+            initCobrinha();
+            return;
+        }
+        
         state.snake.unshift(newHead);
         
         if (newHead.x === state.food.x && newHead.y === state.food.y) {
-            state.food = {
-                x: Math.floor(Math.random() * cols),
-                y: Math.floor(Math.random() * rows)
-            };
+            let newFood;
+            while (true) {
+                newFood = {
+                    x: Math.floor(Math.random() * cols),
+                    y: Math.floor(Math.random() * rows)
+                };
+                if (!state.snake.some(s => s.x === newFood.x && s.y === newFood.y)) break;
+            }
+            state.food = newFood;
         } else {
             state.snake.pop(); 
         }
