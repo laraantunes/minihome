@@ -218,5 +218,10 @@
     "confirm_update_system": "Start system verification and update?",
     "updating": "Updating...",
     "unknown_error": "Unknown error",
-    "server_comm_fail": "Failed to communicate with server."
+    "server_comm_fail": "Failed to communicate with server.",
+    "export_note": "Export Note",
+    "choose_extension": "Choose file extension",
+    "custom_extension": "Custom",
+    "type_extension": "Type extension (e.g. html)",
+    "default": "default"
 }

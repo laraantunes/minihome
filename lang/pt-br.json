@@ -218,5 +218,10 @@
     "confirm_update_system": "Deseja iniciar a verificação e atualização do sistema?",
     "updating": "Atualizando...",
     "unknown_error": "Erro desconhecido",
-    "server_comm_fail": "Falha ao se comunicar com o servidor."
+    "server_comm_fail": "Falha ao se comunicar com o servidor.",
+    "export_note": "Exportar Nota",
+    "choose_extension": "Escolher extensão do arquivo",
+    "custom_extension": "Customizado",
+    "type_extension": "Digite a extensão (ex: html)",
+    "default": "padrão"
 }

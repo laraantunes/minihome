@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const editBtn = document.getElementById('notes-edit-tab');
     const delBtn = document.getElementById('notes-del-tab');
     const expandBtn = document.getElementById('notes-expand-btn');
+    const exportBtn = document.getElementById('notes-export-btn');
     
     const modal = document.getElementById('notes-modal');
     const modalTitle = document.getElementById('notes-modal-title');
@@ -14,6 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const delModal = document.getElementById('notes-del-modal');
     const delModalConfirm = document.getElementById('notes-del-confirm');
     const delModalCancel = document.getElementById('notes-del-cancel');
+    
+    const exportModal = document.getElementById('notes-export-modal');
+    const exportExtSelect = document.getElementById('notes-export-ext');
+    const exportCustomGroup = document.getElementById('notes-export-custom-group');
+    const exportCustomInput = document.getElementById('notes-export-custom-input');
+    const exportCancel = document.getElementById('notes-export-cancel');
+    const exportConfirm = document.getElementById('notes-export-confirm');
 
     let notes = App.loadData('notes', [{ id: Date.now(), title: App.i18n('general'), content: '' }]);
     let activeId = notes[0]?.id;
@@ -202,6 +210,90 @@ document.addEventListener('DOMContentLoaded', () => {
         saveNotes();
     }
 
+    // Export Logic
+    if (exportBtn) {
+        exportBtn.addEventListener('click', () => {
+            if (notes.length === 0) return;
+            const activeNote = notes.find(n => n.id === activeId);
+            if (!activeNote || !activeNote.content.trim()) {
+                App.showToast(App.i18n('start_typing') || 'Note is empty');
+                // Allow exporting empty notes if needed, or maybe just proceed? Let's proceed anyway.
+            }
+            
+            // Reset modal state
+            exportExtSelect.value = 'txt';
+            exportCustomGroup.style.display = 'none';
+            exportCustomInput.value = '';
+            
+            exportModal.classList.add('active');
+        });
+    }
+
+    if (exportExtSelect) {
+        exportExtSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'custom') {
+                exportCustomGroup.style.display = 'block';
+                exportCustomInput.focus();
+            } else {
+                exportCustomGroup.style.display = 'none';
+            }
+        });
+    }
+
+    if (exportCancel) {
+        exportCancel.addEventListener('click', () => {
+            exportModal.classList.remove('active');
+        });
+    }
+
+    if (exportConfirm) {
+        exportConfirm.addEventListener('click', async () => {
+            const activeNote = notes.find(n => n.id === activeId);
+            if (!activeNote) return;
+
+            let ext = exportExtSelect.value;
+            if (ext === 'custom') {
+                ext = exportCustomInput.value.trim().replace(/^\./, ''); // remove leading dot if any
+                if (!ext) ext = 'txt';
+            }
+
+            // Sanitize filename
+            const safeTitle = (activeNote.title || 'note').replace(/[<>:"/\\|?*\x00-\x1F]/g, '_');
+            const fileName = `${safeTitle}.${ext}`;
+            const fileContent = activeNote.content;
+
+            if (window.File && navigator.canShare) {
+                try {
+                    const file = new File([fileContent], fileName, { type: 'text/plain' });
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: activeNote.title,
+                            text: activeNote.title
+                        });
+                        exportModal.classList.remove('active');
+                        return;
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') return;
+                }
+            }
+
+            // Fallback to download
+            const blob = new Blob([fileContent], { type: 'text/plain;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', fileName);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            exportModal.classList.remove('active');
+        });
+    }
+
     renderTabs();
     renderContent();
 
@@ -209,6 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             if (modal.classList.contains('active')) closeModal();
             if (delModal.classList.contains('active')) delModal.classList.remove('active');
+            if (exportModal && exportModal.classList.contains('active')) exportModal.classList.remove('active');
         }
     });
 
@@ -219,5 +312,11 @@ document.addEventListener('DOMContentLoaded', () => {
     delModal.addEventListener('click', (e) => {
         if (e.target === delModal) delModal.classList.remove('active');
     });
+
+    if (exportModal) {
+        exportModal.addEventListener('click', (e) => {
+            if (e.target === exportModal) exportModal.classList.remove('active');
+        });
+    }
 
 });
