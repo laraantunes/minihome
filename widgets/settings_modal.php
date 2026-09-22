@@ -26,13 +26,19 @@
             
             <div class="form-group" style="margin-top: 15px;">
                 <label for="screensaver-select"><?= i18n($user_lang, 'screensaver_model') ?></label>
-                <select id="screensaver-select">
-                    <option value="bolinha"><?= i18n($user_lang, 'screensaver_ball') ?></option>
-                    <option value="matrix"><?= i18n($user_lang, 'screensaver_matrix') ?></option>
-                    <option value="estrelas"><?= i18n($user_lang, 'screensaver_stars') ?></option>
-                    <option value="chuva"><?= i18n($user_lang, 'screensaver_rain') ?></option>
-                    <option value="cobrinha"><?= i18n($user_lang, 'screensaver_snake') ?></option>
-                </select>
+                <div style="display: flex; gap: 8px;">
+                    <select id="screensaver-select" style="flex-grow: 1;">
+                        <option value="bolinha"><?= i18n($user_lang, 'screensaver_ball') ?></option>
+                        <option value="matrix"><?= i18n($user_lang, 'screensaver_matrix') ?></option>
+                        <option value="estrelas"><?= i18n($user_lang, 'screensaver_stars') ?></option>
+                        <option value="chuva"><?= i18n($user_lang, 'screensaver_rain') ?></option>
+                        <option value="cobrinha"><?= i18n($user_lang, 'screensaver_snake') ?></option>
+                        <option value="terminal"><?= i18n($user_lang, 'screensaver_terminal') ?></option>
+                    </select>
+                    <button id="preview-screensaver-btn" class="icon-btn" title="Visualizar" style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 10px;">
+                        <span class="material-icons-round">play_arrow</span>
+                    </button>
+                </div>
             </div>
 
             <hr style="border: 0; border-top: 1px solid var(--border-color); margin: var(--spacing-lg) 0;">

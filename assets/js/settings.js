@@ -58,6 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const previewScreensaverBtn = document.getElementById('preview-screensaver-btn');
+    if (previewScreensaverBtn) {
+        previewScreensaverBtn.addEventListener('click', () => {
+            if (window.startScreensaver) {
+                window.startScreensaver();
+            }
+        });
+    }
+
     // Export Data
     exportBtn.addEventListener('click', () => {
         App.exportData();

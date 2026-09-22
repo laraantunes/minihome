@@ -122,14 +122,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (ball) ball.classList.add('hidden');
         if (canvas) canvas.classList.remove('hidden');
         
+        const colors = ['#ffffff', '#ffffff', '#a855f7', '#4ade80', '#60a5fa', '#fde047', '#fb923c'];
         const stars = [];
         for (let i = 0; i < 200; i++) {
             stars.push({
                 x: Math.random() * canvas.width,
                 y: Math.random() * canvas.height,
-                radius: Math.random() * 1.5,
+                radius: Math.random() * 1.5 + 0.5, // slightly larger so colors are visible
                 vx: Math.floor(Math.random() * 50) - 25,
-                vy: Math.floor(Math.random() * 50) - 25
+                vy: Math.floor(Math.random() * 50) - 25,
+                color: colors[Math.floor(Math.random() * colors.length)]
             });
         }
         
@@ -145,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.stars.forEach(star => {
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fillStyle = "#FFF";
+            ctx.fillStyle = star.color;
             ctx.fill();
             
             star.x += star.vx / 100;
@@ -321,6 +323,129 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // -- TERMINAL ANIMATION --
+    function initTerminal() {
+        if (ball) ball.classList.add('hidden');
+        if (canvas) canvas.classList.remove('hidden');
+        
+        state = {
+            lines: [
+                "MinihomeOS v2.1.2",
+                "Login: admin",
+                "Password: ***",
+                "Welcome to MinihomeOS!",
+                ""
+            ],
+            commands: [
+                { cmd: "sudo apt-get update", out: ["Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease", "Get:2 http://security.ubuntu.com/ubuntu focal-security InRelease [114 kB]", "Fetched 114 kB in 1s (120 kB/s)", "Reading package lists... Done"] },
+                { cmd: "ls -la", out: ["total 42", "drwxr-xr-x 2 admin admin 4096 Sep 22 10:00 .", "drwxr-xr-x 3 admin admin 4096 Sep 22 09:00 ..", "-rw-r--r-- 1 admin admin  220 Sep 22 09:00 .bash_logout", "-rw-r--r-- 1 admin admin 3771 Sep 22 09:00 .bashrc"] },
+                { cmd: "ping -c 3 8.8.8.8", out: ["PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.", "64 bytes from 8.8.8.8: icmp_seq=1 ttl=117 time=14.2 ms", "64 bytes from 8.8.8.8: icmp_seq=2 ttl=117 time=13.5 ms", "64 bytes from 8.8.8.8: icmp_seq=3 ttl=117 time=15.1 ms", "--- 8.8.8.8 ping statistics ---", "3 packets transmitted, 3 received, 0% packet loss, time 2003ms"] },
+                { cmd: "top -b -n 1 | head -n 5", out: ["top - 11:15:00 up 2 days,  1:30,  1 user,  load average: 0.00, 0.00, 0.00", "Tasks: 120 total,   1 running, 119 sleeping,   0 stopped,   0 zombie", "%Cpu(s):  0.5 us,  0.5 sy,  0.0 ni, 99.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st", "KiB Mem :  8192000 total,  4500000 free,  2100000 used,  1592000 buff/cache"] },
+                { cmd: "docker ps", out: ["CONTAINER ID   IMAGE         COMMAND                  CREATED       STATUS       PORTS                               NAMES", "c9f8e4d2a1b3   nginx:latest  \"/docker-entrypoint.…\"   2 hours ago   Up 2 hours   0.0.0.0:80->80/tcp, :::80->80/tcp   web_server", "a1b2c3d4e5f6   mysql:8.0     \"docker-entrypoint.s…\"   2 hours ago   Up 2 hours   3306/tcp                            db_server"] },
+                { cmd: "tail -f /var/log/syslog", out: ["Sep 22 11:10:01 minihome CRON[1234]: (root) CMD (/usr/local/bin/backup.sh)", "Sep 22 11:12:30 minihome systemd[1]: Started Session 42 of user admin.", "Sep 22 11:15:22 minihome kernel: [ 1234.567890] usb 1-1: new high-speed USB device number 3 using xhci_hcd"] }
+            ],
+            cmdIndex: 0,
+            charIndex: 0,
+            outIndex: 0,
+            phase: 'typing', // typing, outputting, waiting
+            timer: 0,
+            frameCount: 0
+        };
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function updateTerminal() {
+        state.frameCount++;
+        if (state.frameCount % 2 !== 0) return; // limit speed
+        
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.font = "16px monospace";
+        const lineHeight = 20;
+        const maxLines = Math.floor(canvas.height / lineHeight) - 1;
+        
+        let displayLines = [...state.lines];
+        let currentCommandObj = state.commands[state.cmdIndex];
+        
+        if (state.phase === 'typing') {
+            if (state.timer > 0) {
+                state.timer--;
+            } else {
+                state.charIndex++;
+                // Velocidade de digitação variável e mais lenta
+                state.timer = Math.floor(Math.random() * 3) + 2; 
+                
+                if (state.charIndex > currentCommandObj.cmd.length) {
+                    state.phase = 'outputting';
+                    state.timer = 10;
+                }
+            }
+        } else if (state.phase === 'outputting') {
+            if (state.timer > 0) {
+                state.timer--;
+            } else {
+                if (state.outIndex === 0) {
+                    state.lines.push("admin@minihome:~$ " + currentCommandObj.cmd);
+                }
+                
+                if (state.outIndex < currentCommandObj.out.length) {
+                    state.lines.push(currentCommandObj.out[state.outIndex]);
+                    state.outIndex++;
+                    state.timer = 2; // small delay between lines
+                } else {
+                    state.phase = 'waiting';
+                    state.timer = 30; // wait before next command
+                }
+            }
+        } else if (state.phase === 'waiting') {
+            if (state.timer > 0) {
+                state.timer--;
+            } else {
+                state.cmdIndex = (state.cmdIndex + 1) % state.commands.length;
+                state.charIndex = 0;
+                state.outIndex = 0;
+                state.phase = 'typing';
+                state.timer = 10;
+            }
+        }
+        
+        if (state.lines.length > maxLines * 2) {
+            state.lines = state.lines.slice(state.lines.length - maxLines);
+        }
+        
+        let promptLine = "admin@minihome:~$ ";
+        if (state.phase === 'typing' || state.phase === 'waiting') {
+            promptLine += currentCommandObj.cmd.substring(0, state.charIndex);
+            if (Math.floor(state.frameCount / 15) % 2 === 0) {
+                promptLine += "█";
+            }
+        }
+        
+        let linesToDraw = [...state.lines];
+        if (state.phase === 'typing' || state.phase === 'waiting') {
+             linesToDraw.push(promptLine);
+        }
+        
+        if (linesToDraw.length > maxLines) {
+            linesToDraw = linesToDraw.slice(linesToDraw.length - maxLines);
+        }
+        
+        for (let i = 0; i < linesToDraw.length; i++) {
+            let text = linesToDraw[i];
+            if (text.startsWith("admin@minihome:~$")) {
+                ctx.fillStyle = "#0F0";
+                ctx.fillText("admin@minihome:~$", 10, 20 + i * lineHeight);
+                ctx.fillStyle = "#CCC";
+                ctx.fillText(text.substring(17), 10 + ctx.measureText("admin@minihome:~$").width, 20 + i * lineHeight);
+            } else {
+                ctx.fillStyle = "#CCC";
+                ctx.fillText(text, 10, 20 + i * lineHeight);
+            }
+        }
+    }
+
     function update() {
         if (!isRunning) return;
 
@@ -329,6 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (type === 'estrelas') updateEstrelas();
         else if (type === 'chuva') updateChuva();
         else if (type === 'cobrinha') updateCobrinha();
+        else if (type === 'terminal') updateTerminal();
 
         animationId = requestAnimationFrame(update);
     }
@@ -345,6 +471,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (type === 'estrelas') initEstrelas();
         else if (type === 'chuva') initChuva();
         else if (type === 'cobrinha') initCobrinha();
+        else if (type === 'terminal') initTerminal();
         else {
             type = 'bolinha';
             initBolinha();
@@ -376,5 +503,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.stopScreensaver = stopScreensaver;
+    window.startScreensaver = startScreensaver;
     window.isScreensaverRunning = () => isRunning;
 });
