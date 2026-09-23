@@ -16,7 +16,7 @@
             <!-- Tabs added via JS -->
         </div>
         
-        <div id="rss-feed-container" class="rss-feed-container" style="overflow-y: auto; flex-grow: 1; max-height: 300px; padding-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+        <div id="rss-feed-container" class="rss-feed-container" style="overflow-y: auto; flex-grow: 1; padding-top: 10px; display: flex; flex-direction: column; gap: 10px;">
             <!-- Feed items added via JS -->
             <div id="rss-loading" style="text-align: center; color: var(--text-secondary); display: none; padding: 20px;"><?= i18n($user_lang, 'loading') ?></div>
             <div id="rss-error" style="text-align: center; color: var(--danger-color); display: none; padding: 20px;"><?= i18n($user_lang, 'feed_error') ?></div>

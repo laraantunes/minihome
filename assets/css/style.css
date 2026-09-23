@@ -907,6 +907,10 @@ body.theme-dark .weather-list-item {
     height: 100%;
 }
 
+.rss-feed-container {
+    max-height: 300px;
+}
+
 .rss-item {
     display: flex;
     gap: 12px;
