@@ -37,6 +37,9 @@ require_once __DIR__ . '/i18n.php';
             <h1><?= i18n($user_lang, 'app_title') ?></h1>
         </div>
         <div style="display: flex; gap: var(--spacing-sm);">
+            <button id="toggle-header-btn" class="icon-btn" aria-label="<?= i18n($user_lang, 'toggle_header') ?>" title="<?= i18n($user_lang, 'toggle_header') ?>">
+                <span class="material-icons-round">top_panel_close</span>
+            </button>
             <button id="widgets-menu-btn" class="icon-btn" aria-label="<?= i18n($user_lang, 'widgets') ?>">
                 <span class="material-icons-round">dashboard_customize</span>
             </button>
@@ -52,6 +55,10 @@ require_once __DIR__ . '/i18n.php';
             </button>
         </div>
     </header>
+
+    <button id="show-header-btn" class="icon-btn hidden" style="position: fixed; top: var(--spacing-sm); right: var(--spacing-sm); z-index: 1000; background-color: var(--widget-bg); box-shadow: var(--shadow-soft); border: 1px solid var(--border-color);" aria-label="<?= i18n($user_lang, 'show_header') ?>" title="<?= i18n($user_lang, 'show_header') ?>">
+        <span class="material-icons-round">top_panel_open</span>
+    </button>
 
     <main class="dashboard-grid">
         <!-- Widgets -->

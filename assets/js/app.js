@@ -12,12 +12,40 @@ const App = {
         // Wait for DOM
         document.addEventListener('DOMContentLoaded', () => {
             this.initWidgetsUI();
+            this.initHeaderToggle();
             // Widgets will self-initialize in their own scripts
         });
     },
 
     i18n(key) {
         return this.i18nData[key] !== undefined ? this.i18nData[key] : key;
+    },
+
+    initHeaderToggle() {
+        const toggleBtn = document.getElementById('toggle-header-btn');
+        const showBtn = document.getElementById('show-header-btn');
+        const header = document.querySelector('.app-header');
+
+        if (toggleBtn && showBtn && header) {
+            // Check saved state
+            const headerHidden = this.loadData('header_hidden', false);
+            if (headerHidden) {
+                header.classList.add('hidden');
+                showBtn.classList.remove('hidden');
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                header.classList.add('hidden');
+                showBtn.classList.remove('hidden');
+                this.saveData('header_hidden', true);
+            });
+
+            showBtn.addEventListener('click', () => {
+                header.classList.remove('hidden');
+                showBtn.classList.add('hidden');
+                this.saveData('header_hidden', false);
+            });
+        }
     },
 
     getLang() {

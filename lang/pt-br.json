@@ -223,5 +223,7 @@
     "choose_extension": "Escolher extensão do arquivo",
     "custom_extension": "Customizado",
     "type_extension": "Digite a extensão (ex: html)",
-    "default": "padrão"
+    "default": "padrão",
+    "toggle_header": "Ocultar Barra Superior",
+    "show_header": "Exibir Barra Superior"
 }

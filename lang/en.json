@@ -223,5 +223,7 @@
     "choose_extension": "Choose file extension",
     "custom_extension": "Custom",
     "type_extension": "Type extension (e.g. html)",
-    "default": "default"
+    "default": "default",
+    "toggle_header": "Hide Top Bar",
+    "show_header": "Show Top Bar"
 }
