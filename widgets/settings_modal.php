@@ -26,7 +26,18 @@
             </div>
 
             <div id="custom-theme-panel" class="hidden" style="margin-top: 15px; padding: 15px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px;">
-                <h4 style="margin-bottom: 10px; font-size: 0.95rem; font-weight: 600;"><?= i18n($user_lang, 'custom_theme_title') ?></h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;"><?= i18n($user_lang, 'custom_theme_title') ?></h4>
+                    <div style="display: flex; gap: 4px;">
+                        <button id="export-theme-btn" class="icon-btn" style="padding: 4px;" aria-label="<?= i18n($user_lang, 'export') ?>" title="<?= i18n($user_lang, 'export') ?>">
+                            <span class="material-icons-round" style="font-size: 18px;">download</span>
+                        </button>
+                        <button id="import-theme-btn" class="icon-btn" style="padding: 4px;" aria-label="<?= i18n($user_lang, 'import') ?>" title="<?= i18n($user_lang, 'import') ?>">
+                            <span class="material-icons-round" style="font-size: 18px;">upload</span>
+                        </button>
+                        <input type="file" id="import-theme-file" accept=".json" class="hidden">
+                    </div>
+                </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
                     <div style="display: flex; flex-direction: column; gap: 4px;">

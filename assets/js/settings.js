@@ -122,7 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save Custom Theme
     const saveCustomThemeBtn = document.getElementById('save-custom-theme-btn');
     if (saveCustomThemeBtn) {
-        saveCustomThemeBtn.addEventListener('click', () => {
+        saveCustomThemeBtn.addEventListener('click', async () => {
+            const bgType = document.getElementById('bg-type-select').value;
             const customData = {
                 colors: {
                     bg: document.getElementById('color-bg').value,
@@ -133,12 +134,95 @@ document.addEventListener('DOMContentLoaded', () => {
                     accentHover: document.getElementById('color-accent-hover').value,
                     border: document.getElementById('color-border').value,
                 },
-                bgType: document.getElementById('bg-type-select').value,
+                bgType: bgType,
                 bgUrl: document.getElementById('bg-url-input').value
             };
+
+            if (bgType === 'none') {
+                customData.bgUrl = '';
+                document.getElementById('bg-url-input').value = '';
+                if (window.MinihomeDB) await window.MinihomeDB.deleteImage('bg_image');
+            } else if (bgType === 'url') {
+                if (window.MinihomeDB) await window.MinihomeDB.deleteImage('bg_image');
+            } else if (bgType === 'upload') {
+                customData.bgUrl = '';
+                document.getElementById('bg-url-input').value = '';
+            }
+
             App.saveData('custom_theme', customData);
             App.applyTheme(); 
             App.showToast("Tema customizado salvo!");
+        });
+    }
+
+    // Export Custom Theme
+    const exportThemeBtn = document.getElementById('export-theme-btn');
+    if (exportThemeBtn) {
+        exportThemeBtn.addEventListener('click', async () => {
+            const customData = App.loadData('custom_theme', {});
+            const fileContent = JSON.stringify(customData, null, 2);
+            const fileName = "minihome_theme_" + Date.now() + ".json";
+
+            if (window.File && navigator.canShare) {
+                try {
+                    const file = new File([fileContent], fileName, { type: 'application/json' });
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Tema Customizado Minihome',
+                            text: 'Tema Customizado Minihome'
+                        });
+                        return;
+                    }
+                } catch (error) {
+                    if (error.name === 'AbortError') return;
+                }
+            }
+
+            // Fallback to download
+            const blob = new Blob([fileContent], { type: 'application/json;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', fileName);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+
+    // Import Custom Theme
+    const importThemeBtn = document.getElementById('import-theme-btn');
+    const importThemeFile = document.getElementById('import-theme-file');
+    
+    if (importThemeBtn && importThemeFile) {
+        importThemeBtn.addEventListener('click', () => {
+            importThemeFile.click();
+        });
+
+        importThemeFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                try {
+                    const importedTheme = JSON.parse(ev.target.result);
+                    if (importedTheme && importedTheme.colors) {
+                        App.saveData('custom_theme', importedTheme);
+                        App.applyTheme();
+                        App.showToast("Tema importado com sucesso!");
+                        setTimeout(() => window.location.reload(), 1500);
+                    } else {
+                        throw new Error('Arquivo de tema inválido');
+                    }
+                } catch (err) {
+                    App.showToast("Erro ao importar tema");
+                }
+            };
+            reader.readAsText(file);
+            importThemeFile.value = '';
         });
     }
 

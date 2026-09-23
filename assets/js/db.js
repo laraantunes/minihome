@@ -40,7 +40,19 @@ const loadImageFromDB = async (key) => {
     });
 };
 
+const deleteImageFromDB = async (key) => {
+    const db = await initDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const request = store.delete(key);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+    });
+};
+
 window.MinihomeDB = {
     saveImage: saveImageToDB,
-    loadImage: loadImageFromDB
+    loadImage: loadImageFromDB,
+    deleteImage: deleteImageFromDB
 };
