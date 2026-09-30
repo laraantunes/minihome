@@ -23,6 +23,7 @@ require_once __DIR__ . '/i18n.php';
     $i18n_json = file_exists(__DIR__ . "/lang/{$user_lang}.json") ? file_get_contents(__DIR__ . "/lang/{$user_lang}.json") : '{}';
     ?>
     <script>
+        window.APP_VERSION = '<?= $v ?>';
         window.I18N_PRELOAD = <?= $i18n_json ?>;
     </script>
     <!-- Main Styles -->

@@ -385,7 +385,8 @@ App.init();
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').then((reg) => {
+        const swUrl = './sw.js?v=' + (window.APP_VERSION || '1.0');
+        navigator.serviceWorker.register(swUrl).then((reg) => {
             if (reg.waiting) {
                 window.location.reload();
             }

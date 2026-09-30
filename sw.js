@@ -1,17 +1,26 @@
-const CACHE_NAME = 'minihome-cache-v8';
+const urlParams = new URL(location.href).searchParams;
+const version = urlParams.get('v') || '2.6.4';
+const CACHE_NAME = 'minihome-cache-v' + version;
+
 const urlsToCache = [
   './index.php',
-  './assets/css/style.css?v=8',
-  './assets/js/app.js?v=8',
-  './assets/js/settings.js?v=8',
-  './assets/js/widgets/clock.js?v=8',
-  './assets/js/widgets/weather.js?v=8',
-  './assets/js/widgets/calendar.js?v=8',
-  './assets/js/widgets/timer.js?v=8',
-  './assets/js/widgets/stopwatch.js?v=8',
-  './assets/js/widgets/todo.js?v=8',
-  './assets/js/widgets/notes.js?v=8',
-  './assets/js/widgets/search.js?v=8',
+  './assets/css/style.css?v=' + version,
+  './assets/js/db.js?v=' + version,
+  './assets/js/app.js?v=' + version,
+  './assets/js/settings.js?v=' + version,
+  './assets/js/widgets/clock.js?v=' + version,
+  './assets/js/widgets/weather.js?v=' + version,
+  './assets/js/widgets/calendar.js?v=' + version,
+  './assets/js/widgets/timer.js?v=' + version,
+  './assets/js/widgets/stopwatch.js?v=' + version,
+  './assets/js/widgets/todo.js?v=' + version,
+  './assets/js/widgets/notes.js?v=' + version,
+  './assets/js/widgets/search.js?v=' + version,
+  './assets/js/widgets/shortener.js?v=' + version,
+  './assets/js/widgets/links.js?v=' + version,
+  './assets/js/widgets/rss.js?v=' + version,
+  './assets/js/widgets/miniplayer.js?v=' + version,
+  './assets/js/screensaver.js?v=' + version,
   './assets/favicon.jpg',
   './assets/icon-192.png',
   './assets/icon-512.png'
