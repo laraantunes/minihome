@@ -44,7 +44,7 @@ Use it at your own language! Minihome has multilanguage support:
 
 ## Using Minihome
 
-Minihome is available at [https://apps.laralabs.dev/minihome](https://apps.laralabs.dev/minihome) or, if you prefer, download the latest release at [releases](https://github.com/laraantunes/minihome/releases/latest) and host it on your own web server.
+Minihome is available at [https://apps.laralabs.dev/minihome](https://apps.laralabs.dev/minihome) or, if you prefer, download the latest [release](https://github.com/laraantunes/minihome/releases/latest) and host it on your own web server.
 
 ## External libraries
 
@@ -56,6 +56,8 @@ Minihome is available at [https://apps.laralabs.dev/minihome](https://apps.laral
 
 Just open a PR or an issue and I'll review it! ☺️
 
-## More about me
+## About me
+
+[My github](https://github.com/laraantunes)
 
 More projects and info about me at [https://laralabs.dev/](https://laralabs.dev/)
