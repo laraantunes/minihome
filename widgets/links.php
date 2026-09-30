@@ -7,7 +7,7 @@
         </div>
     </div>
     
-    <div class="widget-content links-content" style="display: flex; flex-direction: column; overflow-y: auto; max-height: 250px;">
+    <div class="widget-content links-content" style="display: flex; flex-direction: column; overflow-y: auto; max-height: 300px;">
         <ul id="links-list-container" style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
             <!-- Links added via JS -->
         </ul>
