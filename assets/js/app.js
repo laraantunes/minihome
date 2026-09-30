@@ -8,7 +8,7 @@ const App = {
 
     init() {
         this.applyTheme();
-        
+
         // Wait for DOM
         document.addEventListener('DOMContentLoaded', () => {
             this.initWidgetsUI();
@@ -91,7 +91,7 @@ const App = {
         // Inject widget footers
         document.querySelectorAll('.widget').forEach(widget => {
             const id = widget.id;
-            
+
             // Check visibility
             if (widgetsHidden.includes(id)) {
                 widget.classList.add('hidden');
@@ -101,12 +101,12 @@ const App = {
             dragBtn.className = 'icon-btn drag-handle';
             dragBtn.innerHTML = '<span class="material-icons-round">drag_indicator</span>';
             dragBtn.title = App.i18n('move_widget');
-            
+
             const hideBtn = document.createElement('button');
             hideBtn.className = 'icon-btn hide-widget-btn';
             hideBtn.innerHTML = '<span class="material-icons-round">visibility_off</span>';
             hideBtn.title = App.i18n('hide_widget');
-            
+
             hideBtn.addEventListener('click', () => {
                 widget.classList.add('hidden');
                 let hidden = this.loadData('widgets_hidden', []);
@@ -114,7 +114,7 @@ const App = {
                     hidden.push(id);
                     this.saveData('widgets_hidden', hidden);
                 }
-                
+
                 // Dispatch event so top menu can update
                 window.dispatchEvent(new CustomEvent('widgetHiddenChanged'));
             });
@@ -123,7 +123,7 @@ const App = {
             footer.className = 'widget-footer';
             footer.appendChild(dragBtn);
             footer.appendChild(hideBtn);
-            
+
             widget.appendChild(footer);
         });
 
@@ -150,24 +150,24 @@ const App = {
         const updateMenu = () => {
             list.innerHTML = '';
             const widgetsHidden = this.loadData('widgets_hidden', []);
-            
+
             document.querySelectorAll('.widget').forEach(widget => {
                 const id = widget.id;
                 const titleEl = widget.querySelector('.widget-header h2');
                 const titleHTML = titleEl ? titleEl.innerHTML : id;
-                
+
                 const item = document.createElement('div');
                 item.className = 'dropdown-item';
-                
+
                 const isHidden = widgetsHidden.includes(id);
-                
+
                 item.innerHTML = `
                     <label>
                         <input type="checkbox" ${!isHidden ? 'checked' : ''}>
                         <span style="display: flex; align-items: center; gap: 8px;">${titleHTML}</span>
                     </label>
                 `;
-                
+
                 const checkbox = item.querySelector('input');
                 checkbox.addEventListener('change', (e) => {
                     let hidden = this.loadData('widgets_hidden', []);
@@ -182,7 +182,7 @@ const App = {
                     }
                     this.saveData('widgets_hidden', hidden);
                 });
-                
+
                 list.appendChild(item);
             });
         };
@@ -206,11 +206,11 @@ const App = {
 
         let styleTag = document.getElementById('custom-theme-styles');
         if (styleTag) styleTag.remove();
-        
+
         document.body.style.backgroundImage = '';
         document.body.style.backgroundSize = '';
         document.body.style.backgroundPosition = '';
-        
+
         if (theme === 'custom') {
             const customData = this.loadData('custom_theme', {});
             if (customData.colors) {
@@ -230,7 +230,7 @@ const App = {
                 styleTag.textContent = css;
                 document.head.appendChild(styleTag);
             }
-            
+
             if (customData.bgType === 'url' && customData.bgUrl) {
                 document.body.style.backgroundImage = `url('${customData.bgUrl}')`;
                 document.body.style.backgroundSize = 'cover';
@@ -259,7 +259,7 @@ const App = {
             const msgEl = document.getElementById('confirm-message');
             const yesBtn = document.getElementById('confirm-yes-btn');
             const noBtn = document.getElementById('confirm-no-btn');
-            
+
             if (!modal || !msgEl || !yesBtn || !noBtn) {
                 // Fallback to native if not found
                 resolve(window.confirm(message));
@@ -268,16 +268,16 @@ const App = {
 
             msgEl.textContent = message;
             modal.classList.add('active');
-            
+
             const cleanup = () => {
                 modal.classList.remove('active');
                 yesBtn.removeEventListener('click', onYes);
                 noBtn.removeEventListener('click', onNo);
             };
-            
+
             const onYes = () => { cleanup(); resolve(true); };
             const onNo = () => { cleanup(); resolve(false); };
-            
+
             yesBtn.addEventListener('click', onYes);
             noBtn.addEventListener('click', onNo);
         });
@@ -297,10 +297,10 @@ const App = {
                 data[key] = localStorage.getItem(key);
             }
         }
-        
+
         const jsonContent = JSON.stringify(data, null, 2);
         const fileName = `minihome-backup-${new Date().toISOString().split('T')[0]}.json`;
-        
+
         if (window.File && navigator.canShare) {
             try {
                 const file = new File([jsonContent], fileName, { type: 'application/json' });
@@ -316,7 +316,7 @@ const App = {
                 if (error.name === 'AbortError') return;
             }
         }
-        
+
         const blob = new Blob([jsonContent], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -384,10 +384,21 @@ App.init();
 
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .catch(() => {});
-  });
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+            if (reg.waiting) {
+                window.location.reload();
+            }
+            reg.addEventListener('updatefound', () => {
+                const newWorker = reg.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        window.location.reload();
+                    }
+                });
+            });
+        }).catch(() => { });
+    });
 }
 
 // Global Fullscreen Handlers
@@ -416,7 +427,7 @@ document.addEventListener('keydown', (e) => {
         if (typeof window.isScreensaverRunning === 'function' && window.isScreensaverRunning()) {
             window.stopScreensaver();
         }
-        
+
         // Exit any fullscreen widget
         const fullscreenWidgets = document.querySelectorAll('.widget.fullscreen');
         fullscreenWidgets.forEach(widget => {
@@ -426,7 +437,7 @@ document.addEventListener('keydown', (e) => {
                 icon.textContent = 'fullscreen';
             }
         });
-        
+
         // Exit any expanded widget (Tarefas, Notas, RSS)
         const expandedWidgets = document.querySelectorAll('.widget.widget-fullscreen');
         expandedWidgets.forEach(widget => {
@@ -445,22 +456,22 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('click', (e) => {
     // Check if we have any fullscreen widget (.widget-fullscreen is used by Tasks, Notes, RSS)
     const expandedWidget = document.querySelector('.widget.widget-fullscreen');
-    
+
     // Check if we have any fullscreen widget (.fullscreen is used by Timer/Stopwatch)
     const fullscreenWidget = document.querySelector('.widget.fullscreen');
-    
+
     if (expandedWidget || fullscreenWidget) {
         // If click is inside a modal, do nothing (allow interacting with modals)
         if (e.target.closest('.modal-overlay.active')) return;
-        
+
         // If click is inside the fullscreen widget, do nothing
         const path = e.composedPath();
         if (expandedWidget && path.includes(expandedWidget)) return;
         if (fullscreenWidget && path.includes(fullscreenWidget)) return;
-        
+
         // If click is on an expand button itself, do nothing
         if (e.target.closest('[id$="-expand-btn"]') || e.target.closest('.fullscreen-btn')) return;
-        
+
         // Otherwise, close the widgets
         if (expandedWidget) {
             expandedWidget.classList.remove('widget-fullscreen');
@@ -471,7 +482,7 @@ document.addEventListener('click', (e) => {
                 }
             });
         }
-        
+
         if (fullscreenWidget) {
             fullscreenWidget.classList.remove('fullscreen');
             const icon = fullscreenWidget.querySelector('.fullscreen-btn .material-icons-round');
