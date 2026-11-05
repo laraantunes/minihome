@@ -35,6 +35,9 @@ Also, choose one of the screensavers for when you are away for a while:
 - 🌧️ Rain
 - 🐍 Snake
 - 🖥️ Terminal
+- ⚡ Sound Beat
+- 🎸 Rock
+- 🌀 Tunnel
 
 Use it at your own language! Minihome has multilanguage support:
 

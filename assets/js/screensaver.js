@@ -446,6 +446,482 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // -- BATIDA SONORA ANIMATION --
+    function createBolt(w, h, colors) {
+        const isHorizontal = Math.random() > 0.35;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const points = [];
+        const segments = Math.floor(Math.random() * 12) + 10;
+
+        let x, y, dx, dy;
+        if (isHorizontal) {
+            const fromLeft = Math.random() > 0.5;
+            x = fromLeft ? 0 : w;
+            y = Math.random() * h;
+            dx = (fromLeft ? 1 : -1) * (w / segments);
+            dy = (Math.random() - 0.5) * 40;
+        } else {
+            const cx = w / 2;
+            const cy = h / 2;
+            const angle = Math.random() * Math.PI * 2;
+            const dist = Math.max(w, h) * 0.7;
+            x = cx;
+            y = cy;
+            dx = (Math.cos(angle) * dist) / segments;
+            dy = (Math.sin(angle) * dist) / segments;
+        }
+
+        points.push({ x, y });
+        for (let i = 0; i < segments; i++) {
+            x += dx + (Math.random() - 0.5) * 60;
+            y += dy + (Math.random() - 0.5) * 60;
+            points.push({ x, y });
+        }
+
+        return {
+            points,
+            color,
+            alpha: 1,
+            decay: Math.random() * 0.08 + 0.06,
+            width: Math.random() * 3 + 1.5
+        };
+    }
+
+    function initBatida() {
+        if (ball) ball.classList.add('hidden');
+        if (canvas) canvas.classList.remove('hidden');
+
+        const colors = ['#00f3ff', '#ff007f', '#b500ff', '#00ff88', '#ffe600', '#3b82f6'];
+        state = {
+            time: 0,
+            beatPulse: 0,
+            colors,
+            bolts: [],
+            waves: [
+                { color: '#00f3ff', speed: 0.18, amp: 90, freq: 0.012, offset: 0 },
+                { color: '#ff007f', speed: -0.22, amp: 120, freq: 0.009, offset: 2 },
+                { color: '#b500ff', speed: 0.15, amp: 70, freq: 0.016, offset: 4 },
+                { color: '#00ff88', speed: -0.26, amp: 60, freq: 0.02, offset: 1 }
+            ]
+        };
+
+        ctx.fillStyle = "#05000a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function updateBatida() {
+        ctx.save();
+        state.time++;
+
+        // Simula batida de música eletrônica (kick forte a cada 20 frames + sub-batidas rápidas)
+        const isKick = state.time % 20 === 0;
+        const isSubBeat = state.time % 5 === 0;
+
+        if (isKick) {
+            state.beatPulse = 1.0;
+            const count = Math.floor(Math.random() * 4) + 3;
+            for (let i = 0; i < count; i++) {
+                state.bolts.push(createBolt(canvas.width, canvas.height, state.colors));
+            }
+        } else if (isSubBeat && Math.random() > 0.25) {
+            state.beatPulse = Math.max(state.beatPulse, 0.55);
+            state.bolts.push(createBolt(canvas.width, canvas.height, state.colors));
+        }
+
+        state.beatPulse *= 0.86;
+
+        // Fundo escuro com rastro dinâmico e leve flash no kick
+        ctx.fillStyle = `rgba(5, 0, 14, 0.28)`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (state.beatPulse > 0.6) {
+            const flashColor = state.colors[Math.floor((state.time / 20) % state.colors.length)];
+            ctx.fillStyle = flashColor + "15";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        const centerY = canvas.height / 2;
+        const step = 18;
+
+        // Raios contínuos de onda sonora se movimentando rapidamente
+        state.waves.forEach(wave => {
+            wave.offset += wave.speed * (1 + state.beatPulse * 1.5);
+            ctx.beginPath();
+            ctx.strokeStyle = wave.color;
+            ctx.lineWidth = 2 + state.beatPulse * 3;
+            ctx.shadowColor = wave.color;
+            ctx.shadowBlur = 15 + state.beatPulse * 20;
+
+            for (let x = 0; x <= canvas.width + step; x += step) {
+                const baseWave = Math.sin(x * wave.freq + wave.offset) * wave.amp * (0.4 + state.beatPulse * 1.1);
+                const jitter = (Math.random() - 0.5) * (25 + state.beatPulse * 95);
+                const y = centerY + baseWave + jitter;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        });
+
+        // Raios elétricos rápidos disparando pela tela na batida
+        for (let i = state.bolts.length - 1; i >= 0; i--) {
+            const b = state.bolts[i];
+            ctx.beginPath();
+            b.points.forEach((pt, idx) => {
+                const jx = pt.x + (Math.random() - 0.5) * 14;
+                const jy = pt.y + (Math.random() - 0.5) * 14;
+                if (idx === 0) ctx.moveTo(jx, jy);
+                else ctx.lineTo(jx, jy);
+            });
+
+            ctx.globalAlpha = Math.max(0, b.alpha);
+            ctx.strokeStyle = b.color;
+            ctx.lineWidth = b.width + 2;
+            ctx.shadowColor = b.color;
+            ctx.shadowBlur = 25;
+            ctx.stroke();
+
+            // Núcleo branco brilhante do raio
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = Math.max(1, b.width * 0.5);
+            ctx.shadowBlur = 5;
+            ctx.stroke();
+
+            b.alpha -= b.decay;
+            if (b.alpha <= 0) {
+                state.bolts.splice(i, 1);
+            }
+        }
+
+        ctx.restore();
+    }
+
+    // -- ROCK ANIMATION --
+    function createRockLightning(w, h, colors) {
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const points = [];
+        const segments = Math.floor(Math.random() * 8) + 8;
+
+        // Raios verticais/diagonais agressivos estilo palco de Rock
+        let x = Math.random() * w;
+        let y = 0;
+        const targetX = x + (Math.random() - 0.5) * (w * 0.5);
+        const dx = (targetX - x) / segments;
+        const dy = h / segments;
+
+        points.push({ x, y });
+        for (let i = 0; i < segments; i++) {
+            x += dx + (Math.random() - 0.5) * 90;
+            y += dy + (Math.random() - 0.2) * 20;
+            points.push({ x, y });
+        }
+
+        return {
+            points,
+            color,
+            alpha: 1,
+            decay: Math.random() * 0.07 + 0.05,
+            width: Math.random() * 4 + 2.5
+        };
+    }
+
+    function initRock() {
+        if (ball) ball.classList.add('hidden');
+        if (canvas) canvas.classList.remove('hidden');
+
+        const colors = ['#ff0022', '#ff4500', '#ff8c00', '#ffcc00', '#e11d48'];
+        // 6 cordas de guitarra com distorção
+        const strings = [];
+        const stringColors = ['#ff0022', '#ff3300', '#ff5500', '#ff7700', '#ffaa00', '#ffcc00'];
+        for (let i = 0; i < 6; i++) {
+            strings.push({
+                color: stringColors[i],
+                thickness: 3.5 - i * 0.35,
+                vibration: 0,
+                phase: Math.random() * Math.PI * 2,
+                freq: 0.015 + i * 0.004
+            });
+        }
+
+        state = {
+            time: 0,
+            chordHit: 0,
+            colors,
+            strings,
+            bolts: [],
+            sparks: []
+        };
+
+        ctx.fillStyle = "#0a0202";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function updateRock() {
+        ctx.save();
+        state.time++;
+
+        // Ritmo de bateria e power chords de Rock (bumbo/caixa pesados + riffs rápidos)
+        const isPowerChord = state.time % 28 === 0 || state.time % 28 === 12;
+        const isRiffNote = state.time % 6 === 0;
+
+        if (isPowerChord) {
+            state.chordHit = 1.0;
+            // Vibra todas as cordas com força no power chord
+            state.strings.forEach(s => {
+                s.vibration = 1.0;
+            });
+            // Dispara raios rasgados de palco
+            const boltCount = Math.floor(Math.random() * 3) + 2;
+            for (let i = 0; i < boltCount; i++) {
+                state.bolts.push(createRockLightning(canvas.width, canvas.height, state.colors));
+            }
+            // Explosão de faíscas de pirotecnia
+            const sparkX = Math.random() * canvas.width;
+            const sparkY = canvas.height * (0.3 + Math.random() * 0.4);
+            for (let i = 0; i < 25; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 12 + 3;
+                state.sparks.push({
+                    x: sparkX,
+                    y: sparkY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 2,
+                    color: state.colors[Math.floor(Math.random() * state.colors.length)],
+                    alpha: 1,
+                    size: Math.random() * 3 + 1.5
+                });
+            }
+        } else if (isRiffNote) {
+            state.chordHit = Math.max(state.chordHit, 0.45);
+            // Toca 1 ou 2 cordas específicas no riff rápido
+            const strIdx = Math.floor(Math.random() * state.strings.length);
+            state.strings[strIdx].vibration = 0.85;
+            if (Math.random() > 0.4) {
+                state.bolts.push(createRockLightning(canvas.width, canvas.height, state.colors));
+            }
+        }
+
+        state.chordHit *= 0.85;
+
+        // Fundo preto-avermelhado com rastro
+        ctx.fillStyle = "rgba(10, 2, 2, 0.32)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (state.chordHit > 0.65) {
+            ctx.fillStyle = "rgba(255, 20, 0, 0.08)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Desenha as 6 cordas de guitarra com onda de distorção (sawtooth/jagged)
+        const spacing = canvas.height / 7;
+        const step = 14;
+        state.strings.forEach((str, idx) => {
+            const baseY = spacing * (idx + 1);
+            str.phase += 0.35 + str.vibration * 0.4;
+            str.vibration *= 0.9;
+
+            ctx.beginPath();
+            ctx.strokeStyle = str.color;
+            ctx.lineWidth = str.thickness + str.vibration * 2.5;
+            ctx.shadowColor = str.color;
+            ctx.shadowBlur = 10 + str.vibration * 25;
+
+            for (let x = 0; x <= canvas.width + step; x += step) {
+                // Mais amplitude no centro da corda, presa nas pontas
+                const env = Math.sin((x / canvas.width) * Math.PI);
+                const wave = Math.sin(x * str.freq + str.phase) * (str.vibration * 55) * env;
+                // Distorção agressiva pontiaguda típica de guitarra de rock
+                const distortion = ((x / step) % 2 === 0 ? 1 : -1) * (str.vibration * 28) * Math.random() * env;
+                const y = baseY + wave + distortion;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        });
+
+        // Desenha os raios pesados de palco
+        for (let i = state.bolts.length - 1; i >= 0; i--) {
+            const b = state.bolts[i];
+            ctx.beginPath();
+            b.points.forEach((pt, idx) => {
+                const jx = pt.x + (Math.random() - 0.5) * 18;
+                const jy = pt.y + (Math.random() - 0.5) * 10;
+                if (idx === 0) ctx.moveTo(jx, jy);
+                else ctx.lineTo(jx, jy);
+            });
+
+            ctx.globalAlpha = Math.max(0, b.alpha);
+            ctx.strokeStyle = b.color;
+            ctx.lineWidth = b.width + 2;
+            ctx.shadowColor = b.color;
+            ctx.shadowBlur = 30;
+            ctx.stroke();
+
+            ctx.strokeStyle = "#fff5e6";
+            ctx.lineWidth = Math.max(1, b.width * 0.45);
+            ctx.shadowBlur = 6;
+            ctx.stroke();
+
+            b.alpha -= b.decay;
+            if (b.alpha <= 0) {
+                state.bolts.splice(i, 1);
+            }
+        }
+
+        // Desenha faíscas pirotécnicas
+        for (let i = state.sparks.length - 1; i >= 0; i--) {
+            const sp = state.sparks[i];
+            ctx.globalAlpha = Math.max(0, sp.alpha);
+            ctx.fillStyle = sp.color;
+            ctx.shadowColor = sp.color;
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+            ctx.fill();
+
+            sp.x += sp.vx;
+            sp.y += sp.vy;
+            sp.vy += 0.25; // gravidade leve
+            sp.alpha -= 0.04;
+            if (sp.alpha <= 0) {
+                state.sparks.splice(i, 1);
+            }
+        }
+
+        ctx.restore();
+    }
+
+    // -- TUNEL ANIMATION --
+    function createTunnelLight(maxZ, colors) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.random() * 180 + 40;
+        const z = Math.random() * maxZ + 1;
+        return {
+            angle,
+            radius,
+            z,
+            prevZ: z,
+            speed: Math.random() * 3.5 + 3.5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            size: Math.random() * 2.5 + 1.5
+        };
+    }
+
+    function initTunel() {
+        if (ball) ball.classList.add('hidden');
+        if (canvas) canvas.classList.remove('hidden');
+
+        const colors = ['#00f3ff', '#a855f7', '#ec4899', '#3b82f6', '#4ade80', '#fde047', '#ffffff'];
+        const maxZ = 1000;
+        const lights = [];
+        for (let i = 0; i < 220; i++) {
+            lights.push(createTunnelLight(maxZ, colors));
+        }
+
+        const rings = [];
+        const numRings = 10;
+        for (let i = 0; i < numRings; i++) {
+            rings.push({
+                z: (i / numRings) * maxZ + 1,
+                color: colors[i % colors.length]
+            });
+        }
+
+        state = {
+            time: 0,
+            maxZ,
+            colors,
+            lights,
+            rings
+        };
+
+        ctx.fillStyle = "#000005";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function updateTunel() {
+        ctx.save();
+        state.time += 0.008;
+
+        // Fundo escuro com rastro suave para alongar os feixes de luz
+        ctx.fillStyle = "rgba(0, 0, 8, 0.22)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Ponto central com leve movimento orgânico de curva do túnel
+        const cx = canvas.width / 2 + Math.cos(state.time * 0.8) * 35;
+        const cy = canvas.height / 2 + Math.sin(state.time * 1.1) * 25;
+        const fov = Math.min(canvas.width, canvas.height) * 0.85;
+
+        // Brilho no ponto central de origem
+        const grad = ctx.createRadialGradient(cx, cy, 2, cx, cy, 90);
+        grad.addColorStop(0, "rgba(255, 255, 255, 0.35)");
+        grad.addColorStop(0.4, "rgba(168, 85, 247, 0.12)");
+        grad.addColorStop(1, "rgba(0, 0, 0, 0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 90, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Anéis de profundidade do túnel saindo do centro
+        state.rings.forEach(ring => {
+            ring.z -= 3.5;
+            if (ring.z <= 10) {
+                ring.z = state.maxZ;
+                ring.color = state.colors[Math.floor(Math.random() * state.colors.length)];
+            }
+
+            const scale = fov / ring.z;
+            const r = 120 * scale;
+            const alpha = Math.min(0.45, (1 - ring.z / state.maxZ) * 0.6);
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = ring.color;
+            ctx.globalAlpha = Math.max(0, alpha);
+            ctx.lineWidth = Math.max(1, 2.5 * (1 - ring.z / state.maxZ));
+            ctx.shadowColor = ring.color;
+            ctx.shadowBlur = 12;
+            ctx.stroke();
+        });
+
+        // Feixes de luz saindo do ponto central em direção às bordas
+        ctx.lineCap = "round";
+        state.lights.forEach(light => {
+            light.prevZ = light.z;
+            light.z -= light.speed;
+            light.angle += 0.0015; // leve rotação espiral no túnel
+
+            if (light.z <= 5) {
+                light.z = state.maxZ;
+                light.prevZ = state.maxZ;
+                light.angle = Math.random() * Math.PI * 2;
+                light.radius = Math.random() * 180 + 35;
+                light.color = state.colors[Math.floor(Math.random() * state.colors.length)];
+            }
+
+            const scale = fov / light.z;
+            const prevScale = fov / light.prevZ;
+
+            const x = cx + Math.cos(light.angle) * light.radius * scale;
+            const y = cy + Math.sin(light.angle) * light.radius * scale;
+            const px = cx + Math.cos(light.angle) * light.radius * prevScale;
+            const py = cy + Math.sin(light.angle) * light.radius * prevScale;
+
+            const depthRatio = 1 - light.z / state.maxZ;
+            ctx.globalAlpha = Math.min(1, depthRatio * 1.3);
+            ctx.strokeStyle = light.color;
+            ctx.lineWidth = Math.max(1, light.size * depthRatio * 3.2);
+            ctx.shadowColor = light.color;
+            ctx.shadowBlur = 15;
+
+            ctx.beginPath();
+            ctx.moveTo(px, py);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        });
+
+        ctx.restore();
+    }
+
     function update() {
         if (!isRunning) return;
 
@@ -455,6 +931,9 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (type === 'chuva') updateChuva();
         else if (type === 'cobrinha') updateCobrinha();
         else if (type === 'terminal') updateTerminal();
+        else if (type === 'batida') updateBatida();
+        else if (type === 'rock') updateRock();
+        else if (type === 'tunel') updateTunel();
 
         animationId = requestAnimationFrame(update);
     }
@@ -472,6 +951,9 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (type === 'chuva') initChuva();
         else if (type === 'cobrinha') initCobrinha();
         else if (type === 'terminal') initTerminal();
+        else if (type === 'batida') initBatida();
+        else if (type === 'rock') initRock();
+        else if (type === 'tunel') initTunel();
         else {
             type = 'bolinha';
             initBolinha();

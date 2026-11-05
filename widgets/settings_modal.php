@@ -105,6 +105,9 @@
                         <option value="chuva"><?= i18n($user_lang, 'screensaver_rain') ?></option>
                         <option value="cobrinha"><?= i18n($user_lang, 'screensaver_snake') ?></option>
                         <option value="terminal"><?= i18n($user_lang, 'screensaver_terminal') ?></option>
+                        <option value="batida"><?= i18n($user_lang, 'screensaver_beat') ?></option>
+                        <option value="rock"><?= i18n($user_lang, 'screensaver_rock') ?></option>
+                        <option value="tunel"><?= i18n($user_lang, 'screensaver_tunnel') ?></option>
                     </select>
                     <button id="preview-screensaver-btn" class="icon-btn" title="Visualizar" style="background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 8px; padding: 0 10px;">
                         <span class="material-icons-round">play_arrow</span>
