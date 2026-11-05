@@ -447,61 +447,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -- BATIDA SONORA ANIMATION --
-    function createBolt(w, h, colors) {
-        const isHorizontal = Math.random() > 0.35;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const points = [];
-        const segments = Math.floor(Math.random() * 12) + 10;
-
-        let x, y, dx, dy;
-        if (isHorizontal) {
-            const fromLeft = Math.random() > 0.5;
-            x = fromLeft ? 0 : w;
-            y = Math.random() * h;
-            dx = (fromLeft ? 1 : -1) * (w / segments);
-            dy = (Math.random() - 0.5) * 40;
-        } else {
-            const cx = w / 2;
-            const cy = h / 2;
-            const angle = Math.random() * Math.PI * 2;
-            const dist = Math.max(w, h) * 0.7;
-            x = cx;
-            y = cy;
-            dx = (Math.cos(angle) * dist) / segments;
-            dy = (Math.sin(angle) * dist) / segments;
-        }
-
-        points.push({ x, y });
-        for (let i = 0; i < segments; i++) {
-            x += dx + (Math.random() - 0.5) * 60;
-            y += dy + (Math.random() - 0.5) * 60;
-            points.push({ x, y });
-        }
-
-        return {
-            points,
-            color,
-            alpha: 1,
-            decay: Math.random() * 0.08 + 0.06,
-            width: Math.random() * 3 + 1.5
-        };
-    }
-
     function initBatida() {
         if (ball) ball.classList.add('hidden');
         if (canvas) canvas.classList.remove('hidden');
 
-        const colors = ['#00f3ff', '#ff007f', '#b500ff', '#00ff88', '#ffe600', '#3b82f6'];
         state = {
             time: 0,
-            beatPulse: 0,
-            colors,
-            bolts: [],
             waves: [
-                { color: '#00f3ff', speed: 0.18, amp: 90, freq: 0.012, offset: 0 },
-                { color: '#ff007f', speed: -0.22, amp: 120, freq: 0.009, offset: 2 },
-                { color: '#b500ff', speed: 0.15, amp: 70, freq: 0.016, offset: 4 },
-                { color: '#00ff88', speed: -0.26, amp: 60, freq: 0.02, offset: 1 }
+                { color: '#00f3ff', speed: 0.05, amp: 80, freq: 0.01, subFreq: 0.035, offset: 0 },
+                { color: '#ff007f', speed: -0.065, amp: 105, freq: 0.008, subFreq: 0.028, offset: 2 },
+                { color: '#b500ff', speed: 0.04, amp: 65, freq: 0.014, subFreq: 0.042, offset: 4 },
+                { color: '#00ff88', speed: -0.075, amp: 55, freq: 0.018, subFreq: 0.05, offset: 1 }
             ]
         };
 
@@ -511,86 +467,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateBatida() {
         ctx.save();
-        state.time++;
+        state.time += 0.06;
 
-        // Simula batida de música eletrônica (kick forte a cada 20 frames + sub-batidas rápidas)
-        const isKick = state.time % 20 === 0;
-        const isSubBeat = state.time % 5 === 0;
+        // Pulso rítmico contínuo e suave, sem flashes ou piscadas aleatórias
+        const pulse = (Math.sin(state.time * 1.5) + 1) * 0.5;
 
-        if (isKick) {
-            state.beatPulse = 1.0;
-            const count = Math.floor(Math.random() * 4) + 3;
-            for (let i = 0; i < count; i++) {
-                state.bolts.push(createBolt(canvas.width, canvas.height, state.colors));
-            }
-        } else if (isSubBeat && Math.random() > 0.25) {
-            state.beatPulse = Math.max(state.beatPulse, 0.55);
-            state.bolts.push(createBolt(canvas.width, canvas.height, state.colors));
-        }
-
-        state.beatPulse *= 0.86;
-
-        // Fundo escuro com rastro dinâmico e leve flash no kick
-        ctx.fillStyle = `rgba(5, 0, 14, 0.28)`;
+        ctx.fillStyle = "rgba(5, 0, 14, 0.25)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (state.beatPulse > 0.6) {
-            const flashColor = state.colors[Math.floor((state.time / 20) % state.colors.length)];
-            ctx.fillStyle = flashColor + "15";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-
         const centerY = canvas.height / 2;
-        const step = 18;
+        const step = 12;
 
-        // Raios contínuos de onda sonora se movimentando rapidamente
+        // Somente o movimento contínuo das linhas no meio
         state.waves.forEach(wave => {
-            wave.offset += wave.speed * (1 + state.beatPulse * 1.5);
+            wave.offset += wave.speed;
             ctx.beginPath();
             ctx.strokeStyle = wave.color;
-            ctx.lineWidth = 2 + state.beatPulse * 3;
+            ctx.lineWidth = 2.5 + pulse * 1.5;
             ctx.shadowColor = wave.color;
-            ctx.shadowBlur = 15 + state.beatPulse * 20;
+            ctx.shadowBlur = 15;
 
             for (let x = 0; x <= canvas.width + step; x += step) {
-                const baseWave = Math.sin(x * wave.freq + wave.offset) * wave.amp * (0.4 + state.beatPulse * 1.1);
-                const jitter = (Math.random() - 0.5) * (25 + state.beatPulse * 95);
-                const y = centerY + baseWave + jitter;
+                const env = Math.sin((x / canvas.width) * Math.PI);
+                const mainWave = Math.sin(x * wave.freq + wave.offset) * wave.amp * (0.5 + pulse * 0.6);
+                const harmonic = Math.cos(x * wave.subFreq - wave.offset * 1.8) * (wave.amp * 0.35) * env;
+                const y = centerY + mainWave + harmonic;
                 if (x === 0) ctx.moveTo(x, y);
                 else ctx.lineTo(x, y);
             }
             ctx.stroke();
         });
-
-        // Raios elétricos rápidos disparando pela tela na batida
-        for (let i = state.bolts.length - 1; i >= 0; i--) {
-            const b = state.bolts[i];
-            ctx.beginPath();
-            b.points.forEach((pt, idx) => {
-                const jx = pt.x + (Math.random() - 0.5) * 14;
-                const jy = pt.y + (Math.random() - 0.5) * 14;
-                if (idx === 0) ctx.moveTo(jx, jy);
-                else ctx.lineTo(jx, jy);
-            });
-
-            ctx.globalAlpha = Math.max(0, b.alpha);
-            ctx.strokeStyle = b.color;
-            ctx.lineWidth = b.width + 2;
-            ctx.shadowColor = b.color;
-            ctx.shadowBlur = 25;
-            ctx.stroke();
-
-            // Núcleo branco brilhante do raio
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = Math.max(1, b.width * 0.5);
-            ctx.shadowBlur = 5;
-            ctx.stroke();
-
-            b.alpha -= b.decay;
-            if (b.alpha <= 0) {
-                state.bolts.splice(i, 1);
-            }
-        }
 
         ctx.restore();
     }
